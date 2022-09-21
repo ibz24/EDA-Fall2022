@@ -108,6 +108,8 @@ conversion(212)
 conversion(vectorH)
 conversion(vectorL)
 
+vectorH_C <- conversion(vectorH)
+vectorL_C <- conversion(vectorL)
 
 
 
@@ -116,7 +118,7 @@ conversion(vectorL)
 Combine your four vectors into a data frame and add informative column names.
 
 ```{r DataExercise-1c}
-
+d <- cbind(vectorH, vectorL, vectorH_C, vectorL_C)
 ```
 
 Use the common functions `summary` and `sd` to obtain basic data summaries of the ten-day forecast. How would you call these functions differently for the entire data frame vs. a single column? Attempt to demonstrate both options below.

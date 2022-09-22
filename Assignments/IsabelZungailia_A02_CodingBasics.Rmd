@@ -74,6 +74,7 @@ pass_or_fail # logical vector
 student_scores <- data.frame(names=names, scores=scores, pass_or_fail=pass_or_fail)
 
 #8. 
+colnames(student_scores) <- c("Student Name", "Test Score", "Pass?")
 
 ```
 
@@ -89,14 +90,23 @@ student_scores <- data.frame(names=names, scores=scores, pass_or_fail=pass_or_fa
 #9. 
 
 #10. 
-if(pass_or_fail > 50) {
+if("scores" > 50) {
   print("Passing grade")
 } else {
   print("Failed")
 }
 
+ifelse(student_scores$`Test Score` > 50, print("Passed"), print("Failed"))
+
+
+#11. 
+score_i <- 98
+score_l <- 95
+score_jenna <- 95
+score_jaimie <- 90
+
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer:
+> Answer: #

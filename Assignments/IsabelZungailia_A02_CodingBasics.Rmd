@@ -31,18 +31,18 @@ This exercise accompanies the lessons in Environmental Data Analytics on coding 
 4.  Insert comments in your code to describe what you are doing.
 
 ```{r}
-#1. 
+#1. # Generated a sequence of numbers from 1 to 100, increasing by fours. assigned sequence the name "s".
 seq(1, 100, by = 4)
 s <- seq(1, 100, by = 4)
 
-#2. 
+#2. # Calculated the mean of "s". gave the mean value the name of "mean.result".
 mean (s)
 mean.result <- mean(s)
-
+    # Calculated the median of "s". gave the median value the name of "median.result".
 median (s)
 median.result <- median (s)
 
-#3. 
+#3. # Asked R to determine if the mean is greateer than the median. 
 is_mean_greater <- mean.result > median.result
 print(is_mean_greater)
 ```
@@ -58,22 +58,22 @@ print(is_mean_greater)
 8.  Label the columns of your data frame with informative titles.
 
 ```{r}
-#5. 
+#5. # Created three vectors, each with four components. titled the vectors "names", "scores", and "pass_or_fail".
 names <- c("Isabel", "Libby", "Jenna", "Jaimie")
 
 scores <- c(98, 95, 95, 90)
 
 pass_or_fail <- c(TRUE, TRUE, TRUE, TRUE)
 
-#6.
+#6. # Labeled each vector with a comment on what type of vector it is. 
 names # character vector
 scores # numerical vector
 pass_or_fail # logical vector
 
-#7.
+#7. # Combined the three vectors into a data frame. named the data frame "student_scores".
 student_scores <- data.frame(names=names, scores=scores, pass_or_fail=pass_or_fail)
 
-#8. 
+#8. # Labeled the data frame columns with the following names: "Student Name", "Test Score", and "Pass?". 
 colnames(student_scores) <- c("Student Name", "Test Score", "Pass?")
 
 ```
@@ -87,26 +87,18 @@ colnames(student_scores) <- c("Student Name", "Test Score", "Pass?")
 11. Apply your function to the vector with test scores that you created in number 5.
 
 ```{r}
-#9. 
-
-#10. 
-if("scores" > 50) {
-  print("Passing grade")
-} else {
-  print("Failed")
-}
-
+#10. # Used an 'ifelse' statement to determine whether a given test score is a passing grade of 50 or above. 
 ifelse(student_scores$`Test Score` > 50, print("Passed"), print("Failed"))
 
+grade_function <- function (scores) {
+  ifelse(student_scores$`Test Score` > 50, print("Passed"), print("Failed"))
+}
 
-#11. 
-score_i <- 98
-score_l <- 95
-score_jenna <- 95
-score_jaimie <- 90
+#11. Applied 'grade_function' to 'scores' vector from #5. 
+grade_function(scores)
 
 ```
 
 12. QUESTION: Which option of `if` and `else` vs. `ifelse` worked? Why?
 
-> Answer: #
+> Answer: # When I tried to create an 'if' and 'else' statement, I got an error because the condition length is greater than 1. 'If' and 'else' is used when testing a single condition. The 'ifelse' statement worked because it is able to evaluate all the elements in the vector without producing an error. 

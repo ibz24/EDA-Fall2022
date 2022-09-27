@@ -35,7 +35,7 @@ summary(NTL.phys.data)
 str(NTL.phys.data)
 dim(NTL.phys.data)
 
-class(NTL.phys.data$sampledate)
+
 # Format sampledate as date
 NTL.phys.data$sampledate <- as.Date(NTL.phys.data$sampledate, format = "%m/%d/%y")
 ```
@@ -63,14 +63,14 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
-`!=`
-`<`
-`<=`
-`>`
-`>=`
-`&`
-`|`
+`==` # compare value to specific value
+`!=` # check if variables are different
+`<` # check for less than values
+`<=` # less than equal to 
+`>` # greater than
+`>=`# greater than equal to
+`&`# when checking for multiple variables
+`|` # or
 
 ```{r}
 class(NTL.phys.data$lakeid)

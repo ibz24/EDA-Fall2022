@@ -77,7 +77,7 @@ summary(Neonics$Effect)
 summary(Neonics$Species.Common.Name)
 ```
 
-> Answer:
+> Answer: 
 
 8.  Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 

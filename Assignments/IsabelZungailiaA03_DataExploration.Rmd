@@ -27,10 +27,13 @@ The completed exercise is due on Sept 30th.
 ```{r,  message = FALSE}
 # Check working directory.
 getwd()
+setwd("/home/guest/EDA-Fall2022")
+getwd()
 # Install necessary packages.
 library(tidyverse)
 # Upload datasets and name them 'Neonics' and 'Litter'.
-Neonics <- read.csv("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv")
+Neonics <- read.csv("./")
+Litter <- read.csv("./")
 
 ```
 

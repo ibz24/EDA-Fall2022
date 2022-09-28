@@ -34,7 +34,6 @@ library(tidyverse)
 # Upload datasets and name them 'Neonics' and 'Litter'.
 Neonics <- read.csv("./Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv", stringsAsFactors = TRUE)
 Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", stringsAsFactors = TRUE)
-
 ```
 
 ## Learn about your system
@@ -49,7 +48,7 @@ Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", strin
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
-> Answer: 
+> Answer: # 
  1. Litter is defined as material that is dropped from the forest canopy and has a butt end diameter of <2cm and a length <50cm, and it is collected in elevated 0.5m^2 PVC traps. Woody debris is material that is dropped from the forest canopy and has a butt end diameter of <2cm and a length >50cm, and it is collected in ground traps (to ensure that larger materials can be collected). 
  2. One litter trap pair (elevated and ground) is used for every 400m^2 study plot, which totals to around 1-4 traps pairs in each plot. 
  3. Trap placement within the plots depends on the vegetation present, and can either be random or targeted. Litter trap placement is random when sites have >50% aerial cover of woody vegetation >2m in height. When sites have < 50% cover of woody vegetation, trap placement is targeted to ensure that only areas beneath the qualifying vegetation are considered for placement. 
@@ -75,7 +74,7 @@ summary(Neonics$Effect)
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
 
 ```{r}
-
+summary(Neonics$Species.Common.Name)
 ```
 
 > Answer:
@@ -86,7 +85,7 @@ summary(Neonics$Effect)
 
 ```
 
-> Answer:
+> Answer: 
 
 ## Explore your data graphically (Neonics)
 

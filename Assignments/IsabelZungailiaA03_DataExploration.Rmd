@@ -60,7 +60,6 @@ Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", strin
 ```{r}
 # Observe dimensions of the dataset with 'dim()'. 
 dim(Neonics)
-
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?

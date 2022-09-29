@@ -135,13 +135,14 @@ Litter$collectDate <- as.Date(Litter$collectDate, format= "%m %d %y")
 class(Litter$collectDate)
 
 #Use the 'unique' function to determine which dates litter was sampled in August 2018.
-unique(Litter[c(month=08)])
+unique(Litter$setDate)
 ```
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
-
+#Use the 'unique' function to determine how many plots were sampled at Niwot Ridge. 
+unique()
 ```
 
 > Answer:

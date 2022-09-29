@@ -124,8 +124,15 @@ ggplot(Neonics, aes(x=Endpoint)) +
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018.
 
 ```{r}
+#Determine the class of 'collectDate' variable.
+class(Litter$collectDate)
+#Change class to a Date.
+Litter$collectDate <- as.Date(Litter$collectDate, format= "%m %d %y")
+#Confirm new class of the variable.
 class(Litter$collectDate)
 
+#Use the 'unique' function to determine which dates litter was sampled in August 2018.
+unique(Litter[c(month=08)])
 ```
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
@@ -139,12 +146,21 @@ class(Litter$collectDate)
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
 ```{r}
+#Bar graph of 'functionalGroup' counts.
+ggplot(Litter, aes(x = functionalGroup)) +
+  geom_bar()
 
+  
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup.
 
 ```{r}
+ggplot(Litter) +
+  geom_boxplot(aes(x =functionalGroup , y =dryMass))
+
+ggplot(Litter) +
+  geom_violin(aes(x =functionalGroup , y =dryMass))
 
 ```
 

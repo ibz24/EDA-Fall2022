@@ -142,10 +142,11 @@ unique(Litter$setDate)
 
 ```{r}
 #Use the 'unique' function to determine how many plots were sampled at Niwot Ridge. 
-unique()
+summary(Litter$plotID)
+length(unique(Litter$plotID))
 ```
 
-> Answer:
+> Answer: 
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
@@ -153,24 +154,24 @@ unique()
 #Bar graph of 'functionalGroup' counts.
 ggplot(Litter, aes(x = functionalGroup)) +
   geom_bar()
-  
 ```
 
 15. Using `geom_boxplot` and `geom_violin`, create a boxplot and a violin plot of dryMass by functionalGroup.
 
 ```{r}
+#Use 'geom_boxplot' to create a boxplot of 'dryMass' by 'functionalGroup'. 
 ggplot(Litter) +
-  geom_boxplot(aes(x =functionalGroup , y =dryMass))
+  geom_boxplot(aes(x = functionalGroup , y = dryMass))
 
+#Use 'geom_violin' to create a violin plot of 'dryMass' by 'functionalGroup'.
 ggplot(Litter) +
-  geom_violin(aes(x =functionalGroup , y =dryMass))
-
+  geom_violin(aes(x = functionalGroup , y = dryMass))
 ```
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer:
+> Answer: In this case, the boxplot provides a more effective visualization of the 'dryMass' by 'functionalGroup'. 
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+> Answer: At these sites, 'Needles' and 'Mixed' are the two types of litter with the greatest biomass at these sites. 

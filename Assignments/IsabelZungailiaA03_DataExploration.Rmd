@@ -153,7 +153,6 @@ unique()
 #Bar graph of 'functionalGroup' counts.
 ggplot(Litter, aes(x = functionalGroup)) +
   geom_bar()
-
   
 ```
 

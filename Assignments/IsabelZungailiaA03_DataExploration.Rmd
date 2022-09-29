@@ -144,9 +144,10 @@ unique(Litter$setDate)
 #Use the 'unique' function to determine how many plots were sampled at Niwot Ridge. 
 summary(Litter$plotID)
 length(unique(Litter$plotID))
+unique(Litter$plotID)
 ```
 
-> Answer: 
+> Answer: Sumarry tells you how many. 
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 

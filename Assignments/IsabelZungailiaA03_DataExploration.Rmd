@@ -28,7 +28,6 @@ The completed exercise is due on Sept 30th.
 #Check working directory.
 getwd()
 setwd("/home/guest/EDA-Fall2022")
-getwd()
 #install.packages(tidyverse)
 library(tidyverse)
 #Upload datasets and name them 'Neonics' and 'Litter'.
@@ -58,66 +57,74 @@ Litter <- read.csv("./Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv", strin
 5.  What are the dimensions of the dataset?
 
 ```{r}
-# Observe dimensions of the dataset with 'dim()'. 
+#Observe dimensions of the dataset with 'dim()'. 
 dim(Neonics)
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest?
 
 ```{r}
+#Use the 'summary' function on the "Effect" column. Determine the most common effects that are studied.
 summary(Neonics$Effect)
 ```
 
-> Answer:
+> Answer: The most common effects that are studied are population and mortality. Both of these effects have values over 1000 (population=1803 and mortality=1493).
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.
 
 ```{r}
-#Use 'summary' function.
+#Use 'summary' function. Determine the six most commonly used species in the dataset (common name). Common names are listed in descending order of frequency. 
 summary(Neonics$Species.Common.Name)
 ```
 
-> Answer: 
+> Answer: The six most common species in this dataset include: (1) Honey Bee, (2) Parasitic Wasp, (3) Buff Tailed Honeybee, (4) Carniolan Honey Bee, (5) Bumble Bee, (6) Italian Honeybee. All of these species are types of bees, with the exception of the Parasitic Wasp, and they might be of particular interest in this study over other insects due to their key role in the process of pollination. They contribute to the production of over 1/3 of the world's food supply and are used for various purposes in the field of medicine. Without stable bee populations, we would see major changes in pollination distribution and overall food supply.
 
 8.  Concentrations are always a numeric value. What is the class of Conc.1..Author. in the dataset, and why is it not numeric?
 
 ```{r}
-
+class(Neonics$Conc.1..Author.)
 ```
 
-> Answer: 
+> Answer: The class of 'Conc.1..Author.' in the dataset is a "factor". Factors are variables with discrete values, while numerics are numbers. Even though concentrations should always be a number value, the class of 'Conc.1..Author.' is listed as "factor" because of the 'stringAsFactors' subcommand that we used when loading our datasets. 
 
 ## Explore your data graphically (Neonics)
 
 9.  Using `geom_freqpoly`, generate a plot of the number of studies conducted by publication year.
 
 ```{r}
-
+#Use function 'geom_freqpoly' to create a plot. 
+ggplot(Neonics) +
+  geom_freqpoly(aes(x = Publication.Year), bins = 25)
+  
 ```
 
 10. Reproduce the same graph but now add a color aesthetic so that different Test.Location are displayed as different colors.
 
 ```{r}
-
+ggplot(Neonics) +
+  geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 25)
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer:
+> Answer: The two most common test locations are 'Lab' and 'Field natural'. While the test locations vary throughout time, 'Lab' and 'Field natural' are consistently the most commonly used. 'Field articifical' and 'Field undeterminable' have had very low counts throughout the 1980-2020 period. 'Lab' and 'Field natural' both flucatuated between 1990-2020, and 'Lab' had a significant spike in counts in 2012/2012  (while the counts for the three other test locations remained low during this time). 
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information.
 
 ```{r}
-
+ggplot(Neonics, aes(x=Endpoint)) + 
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90))
 ```
 
-> Answer:
+> Answer: The two most common endpoints are 'NOEL' and 'LOEL'.
 
 ## Explore your data (Litter)
 
 12. Determine the class of collectDate. Is it a date? If not, change to a date and confirm the new class of the variable. Using the `unique` function, determine which dates litter was sampled in August 2018.
 
 ```{r}
+class(Litter$collectDate)
 
 ```
 

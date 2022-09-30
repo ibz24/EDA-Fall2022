@@ -182,4 +182,4 @@ Why is the boxplot a more effective visualization option than the violin plot in
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer: At these sites, 'Needles' and 'Mixed' are the two litter types with the greatest biomass at these sites. 
+> Answer: At these sites, 'Needles', 'Mixed', and 'Twigs/branches' are the litter types with the greatest biomass.

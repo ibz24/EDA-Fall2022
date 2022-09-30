@@ -120,7 +120,7 @@ ggplot(Neonics, aes(x=Endpoint)) +
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-> Answer: The two most common endpoints are 'NOEL' and 'LOEL'.
+> Answer: The two most common endpoints are 'NOEL' and 'LOEL'. The 'NOEL' endpoint is part of the "Terrestrial" database and is defined as the "highest dose (concentration) producing effects not significantly different from responses of controls according to author's reported statistical test (NOEAL/NOEC)" (pg. 723, Ecotox_CodeAppendix). The 'LOEL' endpoint is also part of the "Terrestrial" database and is defined as the "lowest dose (concentration) producing effects that were significantly different (as reported by authors) from responses of controls (LOEAL/LOEC)" (pg. 722, Ecotox_CodeAppendix). 'NOEL' is the highest-observable-effect-level, while 'LOEL' is the lowest-observable-effect-level. 
 
 ## Explore your data (Litter)
 
@@ -130,24 +130,27 @@ ggplot(Neonics, aes(x=Endpoint)) +
 #Determine the class of 'collectDate' variable.
 class(Litter$collectDate)
 #Change class to a Date.
-Litter$collectDate <- as.Date(Litter$collectDate, format= "%m %d %y")
+Litter$collectDate <- as.Date(Litter$collectDate, format= "%Y-%m-%d")
 #Confirm new class of the variable.
 class(Litter$collectDate)
-
 #Use the 'unique' function to determine which dates litter was sampled in August 2018.
-unique(Litter$setDate)
+unique(Litter$collectDate)
 ```
 
 13. Using the `unique` function, determine how many plots were sampled at Niwot Ridge. How is the information obtained from `unique` different from that obtained from `summary`?
 
 ```{r}
 #Use the 'unique' function to determine how many plots were sampled at Niwot Ridge. 
-summary(Litter$plotID)
-length(unique(Litter$plotID))
 unique(Litter$plotID)
+#Use the 'summary' function to compare the outputs. 
+summary(Litter$plotID)
+
+#
+length(unique(Litter$plotID))
+length(summary(Litter$plotID))
 ```
 
-> Answer: Sumarry tells you how many. 
+> Answer: The 'unique' function presents a list (of plot IDs) of the 12 different plots that were sampled at Niwot Ridge. 'Summary' provides you with a list of the 12 different plots and the number of how many samples were taken from each plot. I used the 'length()' function to check that both 'unique' and 'summary' gave an equal number of outputs (12). 
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
@@ -171,7 +174,7 @@ ggplot(Litter) +
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer: In this case, the boxplot provides a more effective visualization of the 'dryMass' by 'functionalGroup'. 
+> Answer: In this case, the boxplot provides a more effective visualization of the 'dryMass' by 'functionalGroup'. The violin plot shows the full distribution of the data, so if there is little variance in the dataset, the figure may look odd. The boxplot only shows the summary statistics of the dataset (such as mean, median, interquartile range). The boxplot provides the best visualization for the comparison of 'dryMass' by 'functionalGroup' because there is little variance in the dataset. 
 
 What type(s) of litter tend to have the highest biomass at these sites?
 

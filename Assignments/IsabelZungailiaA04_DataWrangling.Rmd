@@ -118,10 +118,22 @@ EPAair_PM25_NC2018 %>%
 EPAair_PM24_NC2019 %>%
   select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
-#5 For the PM2.5 datasets, fill all cells in AQS_PARAMETER_DESC with "PM2.5" (all cells in this column should be identical).
+#5 Fill all cells in AQS_PARAMETER_DESC with "PM2.5" for both PM2.5 datasets (all cells in this column should be identical).
+EPAair_PM25_NC2018$AQS_PARAMETER_DESC <- "PM2.5"
+EPAair_03_NC2019$AQS_PARAMETER_DESC <- "PM2.5"
 
 #6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
-write.csv()
+#EPAair_03_NC2018_processed 
+write.csv(EPAair_03_NC2018, file = "./Data/Processed/EPAair_03_NC2018_processed.csv", row.names=FALSE)
+
+#EPAair_03_NC2019_processed
+write.csv(EPAair_03_NC2019, file = "./Data/Processed/EPAair_03_NC2019_processed.csv", row.names=FALSE)
+
+#EPAair_PM25_NC2018_processed
+write.csv(EPAair_PM25_NC2018, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv", row.names=FALSE)
+
+#EPAair_PM24_NC2019_processed
+write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_processed.csv", row.names=FALSE)
 
 ```
 
@@ -141,6 +153,7 @@ write.csv()
 
 ```{r}
 #7
+rbind()
 
 #8
 

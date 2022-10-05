@@ -129,7 +129,7 @@ EPAair_03_NC2019$AQS_PARAMETER_DESC <- "PM2.5"
 
 #6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
-#EPAair_03_NC2018_processed
+#EPAair_03_NC2018_processed 
 write.csv(EPAair_03_NC2018, file = "./Data/Processed/EPAair_03_NC2018_processed.csv", row.names=FALSE)
 
 #EPAair_03_NC2019_processed
@@ -161,11 +161,11 @@ write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_proces
 EPAair_18_19 <- rbind(EPAair_03_NC2018, EPAair_03_NC2019, EPAair_PM25_NC2018, EPAair_PM24_NC2019)
 
 #8 Wrangle your new dataset with a pipe function (%>%)
-EPAair_18_19 <-
+EPAair_18_19_wrangle <-
   EPAair_18_19 %>% 
-  filter(Site.Name == "Linville Falls" | Site.Name == "Durham Armory" | Site.Name == "Leggett" | Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" | Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" | Site.Name == "West Johnston Co." | Site.Name == "Garinger High School" | Site.Name == "Castle Hayne" | Site.Name ==  "Pitt Agri. Center" | Site.Name ==  "Bryson City" | Site.Name ==  "Millbrook School") %>%
+  filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
   group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
-  summarise(meanAQI = mean(DAILY_AQI_VALUE), meanlat = mean(SITE_LATITUDE), meanlong = mean(SITE_LONGITUDE))  %>%
+  summarise(meanAQI = mean(DAILY_AQI_VALUE), meanLatitude = mean(SITE_LATITUDE), meanLongitude = mean(SITE_LONGITUDE))  %>%
   mutate(Month = month(Date)) %>% 
   mutate(Year = year(Date))
 

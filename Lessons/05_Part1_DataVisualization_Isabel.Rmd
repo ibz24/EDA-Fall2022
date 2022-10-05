@@ -172,8 +172,12 @@ What might be more effective ways to display the information? Navigate to the bo
 # Box and whiskers plot
 Nutrientplot3 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
+<<<<<<< HEAD
   geom_boxplot(aes(color = nutrient)) 
   # Why didn't we use "fill"? Use 'color' because it regards to the contour of the shape, while 'fill' refers to the filling of the shape. Always use 'color' when changing the boxplot colors.
+=======
+  geom_boxplot(aes(color = nutrient)) # Why didn't we use "fill"?
+>>>>>>> 89701a4 (Copy of 05 Data Visualization P1.)
 print(Nutrientplot3)
 
 # Dot plot

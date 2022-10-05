@@ -169,11 +169,16 @@ EPAair_18_19_wrangle <-
   mutate(Month = month(Date)) %>% 
   mutate(Year = year(Date))
 
-#9
+#9 Spread your datasets such that AQI values for ozone and PM2.5 are in separate columns. Each location on a specific date should now occupy only one row.
+EPAair_18_19_spread <- pivot_wider(EPAair_18_19_wrangle, names_from = AQS_PARAMETER_DESC, values_from = AQS_PARAMETER_DESC)
 
-#10
+EPAair_18_19_tidy <- EPAair_18_19_spread 
 
-#11
+#10 Call up the dimensions of your new tidy dataset.
+dim(EPAair_18_19_tidy)
+
+#11 Save the processed dataset with the following file name: "EPAair_O3_PM25_NC1718_Processed.csv".
+write_csv(EPAair_18_19_tidy, file = "./Data/Processed/EPAair_03_PM25_NC1718_Processed.csv")
 
 ```
 

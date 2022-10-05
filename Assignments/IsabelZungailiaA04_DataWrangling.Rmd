@@ -43,7 +43,7 @@ library(lubridate)
 EPAair_03_NC2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv", stringsAsFactors = TRUE)
 EPAair_03_NC2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv", stringsAsFactors = TRUE)
 EPAair_PM25_NC2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2018_raw.csv", stringsAsFactors = TRUE)
-EPAair_PM24_NC2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
+EPAair_PM25_NC2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv", stringsAsFactors = TRUE)
 
 #2
 #Explore the dimensions, column names, and structure of the datasets.
@@ -62,10 +62,10 @@ dim(EPAair_PM25_NC2018)
 colnames(EPAair_PM25_NC2018)
 str(EPAair_PM25_NC2018)
 
-#EPAair_PM24_NC2019
-dim(EPAair_PM24_NC2019)
-colnames(EPAair_PM24_NC2019)
-str(EPAair_PM24_NC2019)
+#EPAair_PM25_NC2019
+dim(EPAair_PM25_NC2019)
+colnames(EPAair_PM25_NC2019)
+str(EPAair_PM25_NC2019)
 ```
 
 ## Wrangle individual datasets to create processed files.
@@ -97,12 +97,12 @@ class(EPAair_PM25_NC2018$Date)
 EPAair_PM25_NC2018$Date <- as.Date(EPAair_PM25_NC2018$Date, format = "%m/%d/%Y")
 class(EPAair_PM25_NC2018$Date)
 
-#EPAair_PM24_NC2019
+#EPAair_PM25_NC2019
   #Check the class of the date column
-class(EPAair_PM24_NC2019$Date)
+class(EPAair_PM25_NC2019$Date)
   #Change date to date
-EPAair_PM24_NC2019$Date <- as.Date(EPAair_PM24_NC2019$Date, format = "%m/%d/%Y")
-class(EPAair_PM24_NC2019$Date)
+EPAair_PM25_NC2019$Date <- as.Date(EPAair_PM25_NC2019$Date, format = "%m/%d/%Y")
+class(EPAair_PM25_NC2019$Date)
 
 #4
 #Select the following columns: Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE
@@ -119,13 +119,13 @@ EPAair_PM25_NC2018 <-
 EPAair_PM25_NC2018 %>%
   select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
-EPAair_PM24_NC2019 <-
-EPAair_PM24_NC2019 %>%
+EPAair_PM25_NC2019 <-
+EPAair_PM25_NC2019 %>%
   select(Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #5 Fill all cells in AQS_PARAMETER_DESC with "PM2.5" for both PM2.5 datasets (all cells in this column should be identical).
 EPAair_PM25_NC2018$AQS_PARAMETER_DESC <- "PM2.5"
-EPAair_03_NC2019$AQS_PARAMETER_DESC <- "PM2.5"
+EPAair_PM25_NC2019$AQS_PARAMETER_DESC <- "PM2.5"
 
 #6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
 
@@ -138,8 +138,8 @@ write.csv(EPAair_03_NC2019, file = "./Data/Processed/EPAair_03_NC2019_processed.
 #EPAair_PM25_NC2018_processed
 write.csv(EPAair_PM25_NC2018, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv", row.names=FALSE)
 
-#EPAair_PM24_NC2019_processed
-write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_processed.csv", row.names=FALSE)
+#EPAair_PM25_NC2019_processed
+write.csv(EPAair_PM25_NC2019, file = "./Data/Processed/EPAair_PM25_NC2019_processed.csv", row.names=FALSE)
 
 ```
 
@@ -157,10 +157,10 @@ write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_proces
 11. Save your processed dataset with the following file name: "EPAair_O3_PM25_NC1718_Processed.csv"
 
 ```{r}
-#7
-EPAair_18_19 <- rbind(EPAair_03_NC2018, EPAair_03_NC2019, EPAair_PM25_NC2018, EPAair_PM24_NC2019)
+#7 Combine the four datasets using 'rbind'. Double checked that column names are the same.
+EPAair_18_19 <- rbind(EPAair_03_NC2018, EPAair_03_NC2019, EPAair_PM25_NC2018, EPAair_PM25_NC2019)
 
-#8 Wrangle the new dataset with a pipe function (%>%).
+#8 Wrangle the new dataset with a pipe function (%>%). Include the 13 sites listed in the instructions. Add columns for "Month" and "Year" by parsing your "Date" column.
 EPAair_18_19_wrangle <-
   EPAair_18_19 %>% 
   filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
@@ -168,8 +168,6 @@ EPAair_18_19_wrangle <-
   summarise(meanAQI = mean(DAILY_AQI_VALUE), meanLatitude = mean(SITE_LATITUDE), meanLongitude = mean(SITE_LONGITUDE))  %>%
   mutate(Month = month(Date)) %>% 
   mutate(Year = year(Date))
-
-
 
 #9
 

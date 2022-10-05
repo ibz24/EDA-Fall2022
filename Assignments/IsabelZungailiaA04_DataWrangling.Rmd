@@ -160,7 +160,7 @@ write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_proces
 #7
 EPAair_18_19 <- rbind(EPAair_03_NC2018, EPAair_03_NC2019, EPAair_PM25_NC2018, EPAair_PM24_NC2019)
 
-#8 Wrangle your new dataset with a pipe function (%>%)
+#8 Wrangle the new dataset with a pipe function (%>%).
 EPAair_18_19_wrangle <-
   EPAair_18_19 %>% 
   filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%

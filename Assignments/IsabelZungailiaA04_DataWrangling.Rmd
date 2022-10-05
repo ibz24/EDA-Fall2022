@@ -123,20 +123,16 @@ EPAair_PM25_NC2018$AQS_PARAMETER_DESC <- "PM2.5"
 EPAair_03_NC2019$AQS_PARAMETER_DESC <- "PM2.5"
 
 #6 Save all four processed datasets in the Processed folder. Use the same file names as the raw files but replace "raw" with "processed".
-#EPAair_03_NC2018_processed 
-write.csv(EPAair_03_NC2018, file = "./Data/Processed/EPAair_03_NC2018_processed.csv", row.names=FALSE)
 
-#EPAair_03_NC2019_processed
-write.csv(EPAair_03_NC2019, file = "./Data/Processed/EPAair_03_NC2019_processed.csv", row.names=FALSE)
+EPAair_03_NC2018_processed<- write.csv(EPAair_03_NC2018, file = "./Data/Processed/EPAair_03_NC2018_processed.csv", row.names=FALSE)
 
-#EPAair_PM25_NC2018_processed
-write.csv(EPAair_PM25_NC2018, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv", row.names=FALSE)
+EPAair_03_NC2019_processed <- write.csv(EPAair_03_NC2019, file = "./Data/Processed/EPAair_03_NC2019_processed.csv", row.names=FALSE)
 
-#EPAair_PM24_NC2019_processed
-write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_processed.csv", row.names=FALSE)
+EPAair_PM25_NC2018_processed <- write.csv(EPAair_PM25_NC2018, file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv", row.names=FALSE)
+
+EPAair_PM24_NC2019_processed <- write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_processed.csv", row.names=FALSE)
 
 ```
-
 
 ## Combine datasets
 7. Combine the four datasets with `rbind`. Make sure your column names are identical prior to running this code. 
@@ -153,7 +149,7 @@ write.csv(EPAair_PM24_NC2019, file = "./Data/Processed/EPAair_PM24_NC2019_proces
 
 ```{r}
 #7
-rbind()
+EPAair_18_19 <- rbind(EPAair_03_NC2018, EPAair_03_NC2019, EPAair_PM25_NC2018, EPAair_PM24_NC2019)
 
 #8
 

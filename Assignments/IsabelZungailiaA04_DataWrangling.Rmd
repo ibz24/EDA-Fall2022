@@ -209,4 +209,4 @@ dim(EPAair18_19_summary2)
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
-> Answer: 'drop_na' is used to remove all rows that contain missing values. In other words,  'drop_na' only keeps the "complete" rows in the dataset. 'na.omit' is used to omit all unnecesary values from a dataframe, vector, matrix, etc. 
+> Answer: 'drop_na' is used to remove all rows that contain missing values. In other words,  'drop_na' only keeps the "complete" rows in the dataset. 'na.omit' is used to omit all unnecesary values from a dataframe, vector, matrix, etc. 'drop_na' was used in this situation to select specific columns (meanAQI_Ozone) and (meanAQI_PM2.5) for NAs to be removed from.

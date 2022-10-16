@@ -5,7 +5,7 @@ date: "Fall 2022"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: console    #since we will have a lot of outputs
 ---
 
 ## Objectives
@@ -112,15 +112,17 @@ irradiancebydepth <-
   ylim(0, 2000) +
   geom_point() 
 print(irradiancebydepth) 
+#when we plot this, it is clear that we don't have a linear relationship between X and Y
 ```
 
 Given the distribution of irradiance values, we don't have a linear relationship between x and y in this case. Let's try log-transforming the irradiance values. Note we also removing the observations that seems to ba an outlier.
 
 ```{r, fig.height = 3, fig.width = 4}
 PeterPaul.chem.nutrients <- filter(PeterPaul.chem.nutrients, 
-                                   irradianceWater != 0 & irradianceWater < 5000)
+                                   irradianceWater != 0 & irradianceWater < 5000) #remove values that are 0 or < 5000
 irradiance.regression2 <- lm(data = PeterPaul.chem.nutrients, log(irradianceWater) ~ depth)
 summary(irradiance.regression2)
+#this is a much better fit
 
 par(mfrow = c(2,2), mar=c(4,4,4,4))
 plot(irradiance.regression2)

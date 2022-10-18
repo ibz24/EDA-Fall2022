@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Isabel Zungailia"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -40,16 +40,39 @@ the processed data file for the Niwot Ridge litter dataset (use the
 
 ```{r}
 #1 
+getwd() #Check working directory
+library(tidyverse) #Load the tidyverse package
+library(lubridate) #Load the lubridate package
+library(cowplot) #Load the cowplot package
+
+#Upload processed data files
+PeterPaul.chem.nutrients <- 
+  read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv", stringsAsFactors = TRUE)
+
+NiwotRidge.litter <-
+  read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 
 #2 
+#Change format of dates to 'Date' for both datasets
+class(PeterPaul.chem.nutrients$sampledate)
+PeterPaul.chem.nutrients$sampledate <- as.Date(PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
+class(PeterPaul.chem.nutrients$sampledate)
+
+class(NiwotRidge.litter$collectDate)
+NiwotRidge.litter$collectDate <- as.Date(NiwotRidge.litter$collectDate, format = "%Y-%m-%d")
+class(NiwotRidge.litter$collectDate)
 
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
 
 ```{r}
-#3
+#3 Build a theme and set it as the default theme
+mytheme <- theme_classic(base_size = 12) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
 
+theme_set(mytheme)
 ```
 
 ## Create graphs
@@ -64,7 +87,12 @@ limits using `xlim()` and/or `ylim()`).
 
 ```{r}
 #4
-
+totalphos.vs.phosphate <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = po4)) + 
+  geom_point() +
+    xlim(0, 250) +
+  ylim(0, 20)
+print(totalphos.vs.phosphate)
 ```
 
 

@@ -67,11 +67,12 @@ class(NiwotRidge.litter$collectDate)
 3. Build a theme and set it as your default theme.
 
 ```{r}
-#3 Build a theme and set it as the default theme
-mytheme <- theme_classic(base_size = 12) +
+#3 Build a theme - set text size to 14, changed text color to black, and set the legend position to be at the top of the plot
+mytheme <- theme_classic(base_size = 12) + 
   theme(axis.text = element_text(color = "black"), 
         legend.position = "top")
 
+#Set the theme as the default for subsequent plots
 theme_set(mytheme)
 ```
 
@@ -86,12 +87,14 @@ color it black. Adjust your axes to hide extreme values (hint: change the
 limits using `xlim()` and/or `ylim()`).
 
 ```{r}
-#4
+#4 Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
+#how to get separate aes for Peter and Paul lakes?
 totalphos.vs.phosphate <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = po4)) + 
-  geom_point() +
-    xlim(0, 250) +
-  ylim(0, 20)
+    xlim(0, 150) + #Adjust axis to hide extreme values
+  ylim(0, 50) +
+    geom_point() +
+  geom_smooth(method = lm) #Add a line of best fit
 print(totalphos.vs.phosphate)
 ```
 

@@ -88,12 +88,11 @@ limits using `xlim()` and/or `ylim()`).
 
 ```{r}
 #4 Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
-#how to get separate aes for Peter and Paul lakes?
 totalphos.vs.phosphate <-
-  ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = po4)) + 
-    xlim(0, 150) + #Adjust axis to hide extreme values
-  ylim(0, 50) +
-    geom_point() +
+  ggplot(PeterPaul.chem.nutrients, aes(x = po4, y = tp_ug)) + 
+    xlim(0, 50) + #Adjust axis to hide extreme values
+  ylim(0, 150) +
+    geom_point(aes(color = lakename)) + #Separate aesthetics for Peter and Paul lakes
   geom_smooth(method = lm) #Add a line of best fit
 print(totalphos.vs.phosphate)
 ```
@@ -109,6 +108,7 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
 #5
+
 
 ```
 

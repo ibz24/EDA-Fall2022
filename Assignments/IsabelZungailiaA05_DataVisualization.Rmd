@@ -115,6 +115,9 @@ boxplotA <-
   theme(legend.position = "none") +
     scale_x_discrete(drop = FALSE)
 print(boxplotA)
+#Change axis labels
+#Resize
+#Legend?
 
 boxplotB <-
   ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tp_ug)) +
@@ -122,6 +125,9 @@ boxplotB <-
   theme(legend.position = "none") +
   scale_x_discrete(drop = FALSE)
 print(boxplotB)
+#Change axis labels
+#Resize
+#Legend?
 
 boxplotC <-
   ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tn_ug)) +
@@ -129,18 +135,21 @@ boxplotC <-
   theme(legend.position = "none") +
   scale_x_discrete(drop = FALSE)
 print(boxplotC)
+#Change axis labels
+#Resize
+#Legend?
 
 #install.packages("cowplot")
 library(cowplot)
 
-combined_plots <-
-  plot_grid(boxplotA, boxplotB, boxplotC, align = 'h', axis = "bt")
-
 legend <- get_legend(boxplotA +
     guides(color = guide_legend(nrow = 1)) +
     theme(legend.position = "bottom"))
+
+combined_plotsABC <-
+  plot_grid(boxplotA, boxplotB, boxplotC, align = 'h', axis = "bt")
   
-  plot_grid(combined_plots, legend, nrow = 2, align = 'h', axis = "bt")
+  plot_grid(combined_plotsABC, legend, nrow = 2, align = 'h', axis = "bt")
   
 
 ```

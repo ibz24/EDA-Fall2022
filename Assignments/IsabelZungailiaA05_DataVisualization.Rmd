@@ -108,7 +108,40 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
 #5
+# Make three separate boxplots of (a) temperature, (b) TP, and (c) TN
+boxplotA <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = temperature_C)) +
+  geom_boxplot(aes(color = lakename)) +
+  theme(legend.position = "none") +
+    scale_x_discrete(drop = FALSE)
+print(boxplotA)
 
+boxplotB <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tp_ug)) +
+  geom_boxplot(aes(color = lakename)) +
+  theme(legend.position = "none") +
+  scale_x_discrete(drop = FALSE)
+print(boxplotB)
+
+boxplotC <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tn_ug)) +
+  geom_boxplot(aes(color = lakename)) +
+  theme(legend.position = "none") +
+  scale_x_discrete(drop = FALSE)
+print(boxplotC)
+
+#install.packages("cowplot")
+library(cowplot)
+
+combined_plots <-
+  plot_grid(boxplotA, boxplotB, boxplotC, align = 'h', axis = "bt")
+
+legend <- get_legend(boxplotA +
+    guides(color = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom"))
+  
+  plot_grid(combined_plots, legend, nrow = 2, align = 'h', axis = "bt")
+  
 
 ```
 
@@ -127,8 +160,16 @@ three facets rather than separated by color.
 
 ```{r}
 #6
+drymass_by_date <-
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
+  geom_point(aes(color = nlcdClass))
+  print(drymass_by_date)
 
 #7
+drymass_by_date2 <-
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
+  geom_point()
+  print(drymass_by_date2)
 
 
 ```

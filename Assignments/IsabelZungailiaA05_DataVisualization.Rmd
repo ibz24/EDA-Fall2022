@@ -89,7 +89,7 @@ color it black. Adjust your axes to hide extreme values (hint: change the
 limits using `xlim()` and/or `ylim()`).
 
 ```{r}
-#4 Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
+#4Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
 totalphos.vs.phosphate <-
   ggplot(PeterPaul.chem.nutrients, aes(x = po4, y = tp_ug)) + 
   xlab(expression("Phosphate (po4)")) +
@@ -97,7 +97,7 @@ totalphos.vs.phosphate <-
   xlim(0, 40) + #Adjust axis to hide extreme values
   ylim(0, 150) +
     geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
-  geom_smooth(method = lm, color = "black") #Add a line of best fit
+  geom_smooth(method = lm, color = "black") #Add a line of best fit, color it black
 print(totalphos.vs.phosphate)
 ```
 
@@ -112,7 +112,8 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 
 ```{r}
 #5
-# Make three separate boxplots of (a) temperature, (b) TP, and (c) TN
+#Make three separate boxplots of (a) temperature, (b) TP, and (c) TN
+#Temperature boxplot
 boxplotA <-
   ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = temperature_C)) +
   xlab(expression("Month")) +
@@ -122,6 +123,7 @@ boxplotA <-
     scale_x_discrete(drop = FALSE)
 print(boxplotA)
 
+#Total phosphorous boxplot
 boxplotB <-
   ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tp_ug)) +
   xlab(expression("Month")) +
@@ -131,6 +133,7 @@ boxplotB <-
   scale_x_discrete(drop = FALSE)
 print(boxplotB)
 
+#Total nitrogen boxplot
 boxplotC <-
   ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tn_ug)) +
   xlab(expression("Month")) +
@@ -141,24 +144,10 @@ boxplotC <-
 print(boxplotC)
 
 #Combine 3 boxplots into 1 using plot_grid'
+
+plot_grid(boxplotA + theme(legend.position = "none", axis.title.x = element_blank()), boxplotB +  theme(legend.position = "none", axis.title.x = element_blank()), boxplotC + theme(legend.position = "bottom"), nrow = 3, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
+
 plot_grid(boxplotA, boxplotB, boxplotC, nrow = 3, align = 'hv', axis = "bt", rel_heights = c(3, 3, 3))
-
-plot_grid(boxplotA + theme(legend.position = "none", axis.title.x = element_blank()), boxplotB +  theme(legend.position = "none", axis.title.x = element_blank()), boxplotC + theme(legend.position = "bottom", axis.title.x = element_blank()), nrow = 3, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
-
-plot_grid(boxplotA, boxplotB, boxplotC, nrow = 3, align = 'hv', axis = "bt", rel_heights = c(3, 3, 3))
-
-boxplotA <-
-  theme(legend.position = "none", axis.title.x = element_blank())
-boxplotB <-
-  theme(legend.position = "none", axis.title.x = element_blank())
-boxplotC <-
-  theme(legend.position = "bottom", axis.title.x = element_blank())
-
-combinedplots <-
-  plot_grid(boxplotA, boxplotB, boxplotC)
-print(combinedplots)
-  
-#Figure out how to combine legends into 1. 
 
 ```
 

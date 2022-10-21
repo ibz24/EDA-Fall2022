@@ -176,21 +176,19 @@ drymass_by_date <-
   xlab(expression("Date")) + #Set axis labels
   ylab(expression("Dry Mass")) +
   guides(color=guide_legend(title="NLCD Class")) + #Set legend title
+  guides(shape=guide_legend(title="NLCD Class")) +
   geom_point(aes(color = nlcdClass, shape = nlcdClass)) #Separate by NLCD class with a color aesthetic
   print(drymass_by_date)
 
 #7
 #Plot dry mass of needle litter by date and separate NLCD classes into three facets
 drymass_by_date2 <-
-  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
-    xlab(expression("Date")) + #Set axis labels
-  ylab(expression("Dry Mass")) +
-    guides(color=guide_legend(title="NLCD Class")) + #Set legend title
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
   geom_point() +
-  facet_wrap(vars(nlcdClass), nrow = 3) + #Separate NLCD classes into three facets
-  
+  facet_wrap(vars(nlcdClass), nrow = 3) +
+    xlab(expression("Date")) +
+  ylab(expression("Dry Mass")) +
   print(drymass_by_date2)
-
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 

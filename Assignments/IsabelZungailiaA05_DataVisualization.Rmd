@@ -156,7 +156,7 @@ print(boxplotC)
 combined_plotsABC <-
 plot_grid(boxplotA + theme(legend.position = "none"), 
           boxplotB +  theme(legend.position = "none"), 
-          boxplotC + theme(legend.position = "top"), 
+          boxplotC + theme(legend.position = "bottom"), 
           nrow = 1, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
 
 print(combined_plotsABC)
@@ -193,6 +193,7 @@ drymass_by_date <-
 drymass_by_date2 <-
   ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], 
          aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group
+  geom_point() +
   facet_wrap(vars(nlcdClass), nrow = 3) + #Separate NLCD classes into three facets
     xlab(expression("Date")) + #Set axis labels
   ylab(expression("Dry Mass (g)"))

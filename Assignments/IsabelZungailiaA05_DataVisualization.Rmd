@@ -69,10 +69,11 @@ class(NiwotRidge.litter$collectDate)
 3. Build a theme and set it as your default theme.
 
 ```{r}
-#3 Build a theme - set text size to 14, changed text color to black, and set the legend position to be at the top of the plot
-mytheme <- theme_classic(base_size = 12) + 
-  theme(axis.text = element_text(color = "black"), 
-        legend.position = "top")
+#3
+#Build a theme
+mytheme <- theme_classic(base_size = 12) + #Set text size to 12
+  theme(axis.text = element_text(color = "black"), #Change text color to black
+        legend.position = "top") #Set the legend to be positioned at the top of the plot
 
 #Set the theme as the default for subsequent plots
 theme_set(mytheme)
@@ -89,16 +90,19 @@ color it black. Adjust your axes to hide extreme values (hint: change the
 limits using `xlim()` and/or `ylim()`).
 
 ```{r}
-#4Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
-totalphos.vs.phosphate <-
+#4
+#Plot total phosphorus (`tp_ug`) by phosphate (`po4`)
+totalphos.by.phosphate <-
   ggplot(PeterPaul.chem.nutrients, aes(x = po4, y = tp_ug)) + 
-  xlab(expression("Phosphate (po4)")) +
-  ylab(expression("Total Phosphorus (tp_ug)")) +
+  xlab(expression("Phosphate, po4 (µg/l)")) + #Change x-axis label
+  ylab(expression("Total Phosphorus, tp_ug (µg/l)")) + #Change y-axis label
   xlim(0, 40) + #Adjust axis to hide extreme values
   ylim(0, 150) +
+  guides(color=guide_legend(title="Lake Name")) + #Change legend title to "Lake Name"
+  guides(shape=guide_legend(title="Lake Name")) +
     geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
   geom_smooth(method = lm, color = "black") #Add a line of best fit, color it black
-print(totalphos.vs.phosphate)
+print(totalphos.by.phosphate)
 ```
 
 
@@ -115,46 +119,46 @@ see <https://r-lang.com/month-abb-in-r-with-example>
 #Make three separate boxplots of (a) temperature, (b) TP, and (c) TN
 #Temperature boxplot
 boxplotA <-
-  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = temperature_C)) +
-  xlab(expression("Month")) +
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = temperature_C)) + #Convert month integers into factors and include factors 1-12 in the output
+  xlab(expression("Month")) + #Set axis labels
   ylab(expression("Temperature (C)")) +
-  guides(color=guide_legend(title="Lake Name")) +
-  geom_boxplot(aes(color = lakename)) +
-    scale_x_discrete(drop = FALSE)
+  guides(color=guide_legend(title="Lake Name")) + #Set legend title to "Lake Name
+  geom_boxplot(aes(color = lakename)) + #Set lake as a color aesthetic
+    scale_x_discrete(drop = FALSE) #Prevent ggplot from dropping levels having no data
 print(boxplotA)
 
 #Total phosphorous boxplot
 boxplotB <-
-  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tp_ug)) +
-  xlab(expression("Month")) +
-  ylab(expression("Total Phosphorus (tp_ug")) +
-  guides(color=guide_legend(title="Lake Name")) +
-  geom_boxplot(aes(color = lakename)) +
-  scale_x_discrete(drop = FALSE)
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tp_ug)) + #Convert month integers into factors and include factors 1-12 in the output
+  xlab(expression("Month")) + #Set axis labels
+  ylab(expression("Total Phosphorus, tp_ug (µg/l)")) +
+  guides(color=guide_legend(title="Lake Name")) + #Set legend title to "Lake Name
+  geom_boxplot(aes(color = lakename)) + #Set lake as a color aesthetic
+  scale_x_discrete(drop = FALSE) #Prevent ggplot from dropping levels having no data
 print(boxplotB)
 
 #Total nitrogen boxplot
 boxplotC <-
-  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tn_ug)) +
-  xlab(expression("Month")) +
-  ylab(expression("Total Nitrogen (tn_ug)")) +
-  guides(color=guide_legend(title="Lake Name")) +
-  geom_boxplot(aes(color = lakename)) +
-  scale_x_discrete(drop = FALSE)
+  ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, levels = c(1:12)), y = tn_ug)) + #Convert month integers into factors and include factors 1-12 in the output
+  xlab(expression("Month")) + #Set axis labels
+  ylab(expression("Total Nitrogen, tn_ug (µg/l)")) +
+  guides(color=guide_legend(title="Lake Name")) + #Set legend title to "Lake Name"
+  geom_boxplot(aes(color = lakename)) + #Set lake as a color aesthetic
+  scale_x_discrete(drop = FALSE) #Prevent ggplot from dropping levels having no data
 print(boxplotC)
 
-#Combine 3 boxplots into 1 using plot_grid'
+#Make a cowplot with the three graphs - boxplotA, boxplotB, boxplotC. Make sure there is only one legend and that the axis are aligned
+combined_plotsABC <-
+plot_grid(boxplotA + theme(legend.position = "none"), boxplotB +  theme(legend.position = "none"), boxplotC + theme(legend.position = "bottom"), nrow = 1, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
 
-plot_grid(boxplotA + theme(legend.position = "none", axis.title.x = element_blank()), boxplotB +  theme(legend.position = "none", axis.title.x = element_blank()), boxplotC + theme(legend.position = "bottom"), nrow = 3, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
-
-plot_grid(boxplotA, boxplotB, boxplotC, nrow = 3, align = 'hv', axis = "bt", rel_heights = c(3, 3, 3))
+print(combined_plotsABC)
 
 ```
 
 Question: What do you observe about the variables of interest over seasons 
 and between lakes? 
 
-> Answer: 
+> Answer: The variables of interest - Temperature (C), Total Phosphorous (µg/l), and Nitrogen (µg/l) - follow relatively similar trends in both lakes throughout the year. The mean temperature was slightly higher in Paul Lake throughout every month except October and November, and both lakes recorded their highest temperatures in the months of August and September. The mean total phosphorous (µg/l) levels were slightly higher in Peter Lake throughout every month that was sampled. The greatest mean total phosphorous for Paul Lake was recorded in the months of May and September, while the greatest mean total phosphorous for Peter Lake was recorded in September. The mean nitrogen (µg/l) levels were also slightly higher in Peter Lake (than Paul) throughout every month that was sampled. The greatest mean nitrogen level for Paul Lake was recorded in the month of September, while the greatest mean nitrogen count for Peter Lake was recorded in August. Overall, it appears that the months with warmer temperatures generate higher levels of total phosphorous and nitrogen.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the 
 "Needles" functional group. Plot the dry mass of needle litter by date and 
@@ -166,20 +170,25 @@ three facets rather than separated by color.
 
 ```{r}
 #6
+#Plot dry mass of needle litter by date
 drymass_by_date <-
-  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
-  xlab(expression("Date")) +
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
+  xlab(expression("Date")) + #Set axis labels
   ylab(expression("Dry Mass")) +
-  geom_point(aes(color = nlcdClass, shape = nlcdClass))
+  guides(color=guide_legend(title="NLCD Class")) + #Set legend title
+  geom_point(aes(color = nlcdClass, shape = nlcdClass)) #Separate by NLCD class with a color aesthetic
   print(drymass_by_date)
 
 #7
+#Plot dry mass of needle litter by date and separate NLCD classes into three facets
 drymass_by_date2 <-
-  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
+    xlab(expression("Date")) + #Set axis labels
+  ylab(expression("Dry Mass")) +
+    guides(color=guide_legend(title="NLCD Class")) + #Set legend title
   geom_point() +
-  facet_wrap(vars(nlcdClass), nrow = 3) +
-    xlab(expression("Date")) +
-  ylab(expression("Dry Mass"))
+  facet_wrap(vars(nlcdClass), nrow = 3) + #Separate NLCD classes into three facets
+  
   print(drymass_by_date2)
 
 

@@ -33,9 +33,11 @@ The completed exercise is due on Friday, Oct 14th @ 5:00pm.
 ## Set up your session 
 1. Set up your session. Verify your working directory and load the tidyverse, 
 lubridate, & cowplot packages. Upload the NTL-LTER processed data files for  
-nutrients and chemistry/physics for Peter and Paul Lakes (use the tidy 
+nutrients and chemistry/physics for Peter and Paul Lakes (use the tidy
+
 [`NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv`] version) and 
 the processed data file for the Niwot Ridge litter dataset (use the
+
 [`NEON_NIWO_Litter_mass_trap_Processed.csv`] version). 
 
 2. Make sure R is reading dates as date format; if not change the format to date.
@@ -49,7 +51,7 @@ library(cowplot) #Load the cowplot package
 
 #Upload processed data files
 PeterPaul.chem.nutrients <- 
-  read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv",
+read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv",
            stringsAsFactors = TRUE)
 
 NiwotRidge.litter <-
@@ -102,7 +104,7 @@ totalphos.by.phosphate <-
   ylim(0, 150) +
   guides(color=guide_legend(title="Lake Name")) + #Change legend title to "Lake Name"
   guides(shape=guide_legend(title="Lake Name")) +
-    geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
+  geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
   geom_smooth(method = lm, color = "black") #Add a line of best fit, color it black
 print(totalphos.by.phosphate)
 ```
@@ -154,7 +156,7 @@ print(boxplotC)
 combined_plotsABC <-
 plot_grid(boxplotA + theme(legend.position = "none"), 
           boxplotB +  theme(legend.position = "none"), 
-          boxplotC + theme(legend.position = "bottom"), 
+          boxplotC + theme(legend.position = "top"), 
           nrow = 1, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
 
 print(combined_plotsABC)
@@ -179,8 +181,7 @@ three facets rather than separated by color.
 #Plot dry mass of needle litter by date
 drymass_by_date <-
   ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], 
-         aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
-  xlab(expression("Date")) + #Set axis labels
+         aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group
   ylab(expression("Dry Mass (g)")) +
   guides(color=guide_legend(title="NLCD Class")) + #Set legend title
   guides(shape=guide_legend(title="NLCD Class")) +
@@ -191,8 +192,7 @@ drymass_by_date <-
 #Plot dry mass of needle litter by date and separate NLCD classes into three facets
 drymass_by_date2 <-
   ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], 
-         aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
-  geom_point() +
+         aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group
   facet_wrap(vars(nlcdClass), nrow = 3) + #Separate NLCD classes into three facets
     xlab(expression("Date")) + #Set axis labels
   ylab(expression("Dry Mass (g)"))

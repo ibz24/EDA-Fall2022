@@ -154,8 +154,8 @@ print(boxplotC)
 #Make a cowplot with the three graphs - boxplotA, boxplotB, boxplotC
 #Make sure there is only one legend and that the axis are aligned
 combined_plotsABC <-
-plot_grid(boxplotA + theme(legend.position = "none"), 
-          boxplotB +  theme(legend.position = "bottom"), 
+plot_grid(boxplotA + theme(legend.position = "bottom"), 
+          boxplotB +  theme(legend.position = "none"), 
           boxplotC + theme(legend.position = "none"), 
           nrow = 1, align = 'hv', axis = "bt", rel_heights = c(1.6, 1.7, 2.3))
 

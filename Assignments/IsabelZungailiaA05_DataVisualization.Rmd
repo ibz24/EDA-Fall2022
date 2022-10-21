@@ -174,7 +174,7 @@ three facets rather than separated by color.
 drymass_by_date <-
   ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
   xlab(expression("Date")) + #Set axis labels
-  ylab(expression("Dry Mass")) +
+  ylab(expression("Dry Mass (g)")) +
   guides(color=guide_legend(title="NLCD Class")) + #Set legend title
   guides(shape=guide_legend(title="NLCD Class")) +
   geom_point(aes(color = nlcdClass, shape = nlcdClass)) #Separate by NLCD class with a color aesthetic
@@ -183,14 +183,14 @@ drymass_by_date <-
 #7
 #Plot dry mass of needle litter by date and separate NLCD classes into three facets
 drymass_by_date2 <-
-  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) +
+  ggplot(NiwotRidge.litter[NiwotRidge.litter$functionalGroup %in% "Needles",], aes(x = collectDate, y = dryMass)) + #Display the "Needles" functional group the litter dataset
   geom_point() +
-  facet_wrap(vars(nlcdClass), nrow = 3) +
-    xlab(expression("Date")) +
-  ylab(expression("Dry Mass")) +
+  facet_wrap(vars(nlcdClass), nrow = 3) + #Separate NLCD classes into three facets
+    xlab(expression("Date")) + #Set axis labels
+  ylab(expression("Dry Mass (g)"))
   print(drymass_by_date2)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
-> Answer:
+> Answer: After comparing the plots (6 vs. 7), I think the plot in #7 is more effective in showing the comparison of trends between the three NLCD classes in the "Needles" functional group. The 'facet_wrap' function generate multi-panel plots, which was a better way to display this dataset rather than having all the classes mixed together (as in #6). It is helpful to be able to visualize the individual trends of dry mass in each NLCD class, but then we can also make comparsions between all three classes by layering the individual plots on top of each other (with 'facet_wrap'). 

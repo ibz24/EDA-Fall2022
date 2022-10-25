@@ -1,6 +1,6 @@
 ---
 title: "Assignment 6: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Student Name"
+author: "Isabel Zungailia"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -34,10 +34,30 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r setup}
 #1
+#Check working directory
+getwd()
+#Load necessary packages
+library(tidyverse)
+library(lubridate)
+#If needed, install/update package "htmltools" before installing and loading agricolae
+#install.packages("htmltools")
+library(htmltools)
+#install.packages("agricolae")
+library(agricolae)
 
+#Import the raw NTL-LTER raw data file for chemistry/physics
+NTL_LTER.chem.phys <-
+  read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = TRUE)
+
+#Set date columns to date objects
+NTL_LTER.chem.phys$sampledate <- as.Date(NTL_LTER.chem.phys$sampledate, format = "%m-%d-%y")
 
 #2
-
+#Set theme
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
 
 ```
 
@@ -58,10 +78,25 @@ Ha:
 5. Visualize the relationship among the two continuous variables with a scatter plot of temperature by depth. Add a smoothed line showing the linear model, and limit temperature values from 0 to 35 °C. Make this plot look pretty and easy to read.
 
 ```{r scatterplot}
-#4
-
+#4 
+#Wrangle NTL-LTER dataset with a pipe function
+wrangled_NTL_LTER.chem.phys <-
+  NTL_LTER.chem.phys %>%
+  filter(month = July) %>% #Only dates in July
+  select(lakename, year4, daynum, depth, temperature_C) %>% #Select specific columns
+  drop_na(NTL_LTER.chem.phys) *Remove NAs so that only complete cases exists
 
 #5
+temperature.by.depth <-
+  ggplot(wrangled_NTL_LTER.chem.phys, aes(x = depth, y = temperature)) + 
+  xlab(expression("Depth")) + #Change x-axis label
+  ylab(expression("Temperature")) + #Change y-axis label
+  ylim(0, 35) +  #Adjust axis to hide extreme values
+ # guides(color=guide_legend(title="Lake Name")) + #Change legend title to "Lake Name"
+  #guides(shape=guide_legend(title="Lake Name")) +
+ # geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
+  geom_smooth(method = lm, color = "black") #Add a line of best fit, color it black
+print(temperature.by.depth)
 
 
 ```

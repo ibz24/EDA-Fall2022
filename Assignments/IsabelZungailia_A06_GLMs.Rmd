@@ -68,8 +68,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: There is no correlation between lake temperature (C) and depth (slope and y-intercept are 0).
+Ha: There is a correlation between lake temperature (C) and depth. 
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -99,20 +99,20 @@ temperature.by.depth <-
   geom_smooth(method = lm, color = "black") #Add a line of best fit
 print(temperature.by.depth)
 
-
 ```
 
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: 
+> Answer: This figure suggests that temperature (C) decreases as depth increases (m). The Distribution of points suggest...
 
 
 7. Perform a linear regression to test the relationship and display the results
 
 ```{r linear.regression}
 #7
-temperature_depth.regression <- lm(data = wrangled_NTL_LTER.chem.phys, temperature~depth)
+temperature_depth.regression <- lm(data = NTL_LTER.RAW.chem.phys.wrangled, year4 ~ temperature_C)
+summary(temperature_depth.regression)
 
 ```
 

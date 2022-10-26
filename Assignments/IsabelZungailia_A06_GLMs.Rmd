@@ -33,7 +33,7 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 2. Build a ggplot theme and set it as your default theme.
 
 ```{r setup}
-#1
+#1.
 #Check working directory
 getwd()
 #Load necessary packages
@@ -46,15 +46,15 @@ library(htmltools)
 library(agricolae)
 
 #Import the raw NTL-LTER raw data file for chemistry/physics
-NTL_LTER.chem.phys <-
+NTL_LTER.RAW.chem.phys <-
   read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = TRUE)
 
 #Set date columns to date objects
-class(NTL_LTER.chem.phys$sampledate)
-NTL_LTER.chem.phys$sampledate <- as.Date(NTL_LTER.chem.phys$sampledate, format = "%m/%d/%y")
-class(NTL_LTER.chem.phys$sampledate)
+class(NTL_LTER.RAW.chem.phys$sampledate)
+NTL_LTER.RAW.chem.phys$sampledate <- as.Date(NTL_LTER.RAW.chem.phys$sampledate, format = "%m/%d/%y")
+class(NTL_LTER.RAW.chem.phys$sampledate)
 
-#2
+#2.
 #Set theme
 mytheme <- theme_classic(base_size = 14) +
   theme(axis.text = element_text(color = "black"), 
@@ -80,18 +80,18 @@ Ha:
 5. Visualize the relationship among the two continuous variables with a scatter plot of temperature by depth. Add a smoothed line showing the linear model, and limit temperature values from 0 to 35 °C. Make this plot look pretty and easy to read.
 
 ```{r scatterplot}
-#4 
+#4.
 #Use a pipe function to wrangle the NTL-LTER dataset
-wrangled_NTL_LTER.chem.phys <-
-  NTL_LTER.chem.phys %>%
-  mutate(NTL_LTER.chem.phys, month = month(sampledate)) %>% 
-  select(month = "July") %>% #Select only dates in July
-  select(NTL_LTER.chem.phys, lakename, year4, daynum, depth, temperature_C) %>% #Select specific columns
-  omit.na(NTL_LTER.chem.phys) #Remove NAs so that only complete cases exists
+NTL_LTER.RAW.chem.phys.wrangled <-
+  NTL_LTER.RAW.chem.phys %>%
+    mutate(month = month(sampledate)) %>% 
+      filter(month == 7) %>%  #Select only dates in July
+        select(lakename:daynum, depth:temperature_C) %>% #Select specific columns
+          na.omit() #Omit NAs so that only complete cases exists
 
-#5
+#5.
 temperature.by.depth <-
-  ggplot(wrangled_NTL_LTER.chem.phys, aes(x = depth, y = temperature)) + 
+  ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C)) + 
   xlab(expression("Depth")) + #Change x-axis label
   ylab(expression("Temperature (C)")) + #Change y-axis label
   ylim(0, 35) +  #Adjust axis to hide extreme values

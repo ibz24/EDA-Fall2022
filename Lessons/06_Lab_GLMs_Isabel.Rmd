@@ -84,12 +84,21 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 ```{r}
 
 #Exercise 2: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
+PM2.5_Ozone_regression <- lm(EPAair$PM2.5 ~ EPAair$Ozone)
+summary(PM2.5_Ozone_regression)
 
+#p-value is very small - which means we reject the new hypothesis (new hypothesis=there is no relationship)
+#we don't want to analyze many variables in 1 model; simple is better!
+#r-squared = .13 --> 13% of PM2.5 values are explained by Ozone levels
 
 
 #Exercise 3: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
+PM2.5_Ozone.Plot <-
+  ggplot(EPAair, aes(x = Ozone, y = PM2.5)) +
+  geom_point() +
+  geom_smooth(method = "lm", col="blue")
 
-
+print(PM2.5_Ozone.Plot)
 
 ```
 
@@ -102,16 +111,42 @@ What other variables can we add to improve model?
 
 #Exercise 4: Build correlation plots and identify more possible explanatory variables to add to the regression.
 
+#install.packages("corrplot")
+library(corrplot)
+EPA_subset <-
+  EPAair %>%
+  select(meanLat:Ozone) %>%
+  na.omit() 
+
+EPA_Corr <- cor(EPA_subset)
+view(EPA_Corr) #Hard to visualize, can use "ellipse" to get a better visualization
+corrplot(EPA_Corr, method = "ellipse")
+corrplot.mixed(EPA_Corr, upper = "ellipse")
+
+#The narrower the shape, the closer correlation
+#Blue= + correlation, Red= - correlation
+#Strong relationships between Ozone/PM2.5, PM2.5/meanLat, Ozone/Month
+
+#Exercise 5: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 4?
+
+EPA_AIC <-
+  lm(data = EPA_subset, PM2.5 ~ Ozone + Year + Month + meanLng + meanLat)
+summary(EPA_AIC)
+step(EPA_AIC)
 
 
 
-#Exercise 5: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
-
-
+#Overall p-value is very small, r-squared =  0.192
+#Year has a value greater than .05 ...
+#The more variables we add, the more complicated the model gets; AIC does the scale for us, "is it worth adding another variable to this model"
+#We can make our results better by removing "Year", it will improve the AIC value
 
 
 #Exercise 6: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
-
+OzoneBest.regression <-
+    lm(data = EPA_subset, PM2.5 ~ Ozone + Month + meanLng + meanLat)
+summary(OzoneBest.regression)
+  
 ```
 
 
@@ -131,9 +166,13 @@ summary(Litter.Totals.anova)
 # Extract groupings for pairwise relationships
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups$groups
+#Shows us the mean for each site
+#Grouping the sites based on their mean dry mass
 
 Litter.Totals <- Litter %>%
   mutate( treatgroups = Litter.Totals.groups$groups[plotID,2])
+#Adding a column for "treatgroups"
+
 
 # Graph the results
 Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
@@ -151,3 +190,18 @@ print(Litter.Totals.plot)
 ```{r}
 #Exercise 7: Improve the plot```
 
+#Reorder sites based on "treatgroups" column (maybe in alphabetical order)
+assign.group <- function(site)
+  return
+
+treatgroups=array(0,length(Litter.Totals))
+
+Litter.Totals.plot2 <- ggplot(Litter.Totals, groups=treatgroups) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = c("abc", "ab", "abcd", "bcd", "bcd", "a", 
+                         "d", "abcd", "cd", "d", "abcd", "abcd")) +
+  labs(x = "Plot ID", y = "Dry Mass (g)") +
+  ylim(0, 85)
+print(Litter.Totals.plot2)

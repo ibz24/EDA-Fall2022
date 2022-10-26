@@ -81,23 +81,22 @@ Ha:
 
 ```{r scatterplot}
 #4 
-#Wrangle NTL-LTER dataset with a pipe function
+#Use a pipe function to wrangle the NTL-LTER dataset
 wrangled_NTL_LTER.chem.phys <-
   NTL_LTER.chem.phys %>%
-  filter(month = July) %>% #Only dates in July
-  select(lakename, year4, daynum, depth, temperature_C) %>% #Select specific columns
-  drop_na(NTL_LTER.chem.phys) *Remove NAs so that only complete cases exists
+  mutate(NTL_LTER.chem.phys, month = month(sampledate)) %>% 
+  select(month = "July") %>% #Select only dates in July
+  select(NTL_LTER.chem.phys, lakename, year4, daynum, depth, temperature_C) %>% #Select specific columns
+  omit.na(NTL_LTER.chem.phys) #Remove NAs so that only complete cases exists
 
 #5
 temperature.by.depth <-
   ggplot(wrangled_NTL_LTER.chem.phys, aes(x = depth, y = temperature)) + 
   xlab(expression("Depth")) + #Change x-axis label
-  ylab(expression("Temperature")) + #Change y-axis label
+  ylab(expression("Temperature (C)")) + #Change y-axis label
   ylim(0, 35) +  #Adjust axis to hide extreme values
- # guides(color=guide_legend(title="Lake Name")) + #Change legend title to "Lake Name"
-  #guides(shape=guide_legend(title="Lake Name")) +
- # geom_point(aes(color = lakename, shape = lakename)) + #Separate aesthetics for Peter and Paul lakes
-  geom_smooth(method = lm, color = "black") #Add a line of best fit, color it black
+  geom_point() +
+  geom_smooth(method = lm, color = "black") #Add a line of best fit
 print(temperature.by.depth)
 
 
@@ -113,7 +112,7 @@ print(temperature.by.depth)
 
 ```{r linear.regression}
 #7
-
+temperature_depth.regression <- lm(data = wrangled_NTL_LTER.chem.phys, temperature~depth)
 
 ```
 

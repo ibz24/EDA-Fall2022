@@ -50,7 +50,9 @@ NTL_LTER.chem.phys <-
   read.csv("./Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv",stringsAsFactors = TRUE)
 
 #Set date columns to date objects
-NTL_LTER.chem.phys$sampledate <- as.Date(NTL_LTER.chem.phys$sampledate, format = "%m-%d-%y")
+class(NTL_LTER.chem.phys$sampledate)
+NTL_LTER.chem.phys$sampledate <- as.Date(NTL_LTER.chem.phys$sampledate, format = "%m/%d/%y")
+class(NTL_LTER.chem.phys$sampledate)
 
 #2
 #Set theme

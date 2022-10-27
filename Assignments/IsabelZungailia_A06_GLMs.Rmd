@@ -111,7 +111,7 @@ print(temperature.by.depth)
 
 ```{r linear.regression}
 #7
-temperature_depth.regression <- lm(data = NTL_LTER.RAW.chem.phys.wrangled, year4 ~ temperature_C)
+temperature_depth.regression <- lm(data = NTL_LTER.RAW.chem.phys.wrangled, depth ~ temperature_C)
 summary(temperature_depth.regression)
 
 ```
@@ -120,6 +120,9 @@ summary(temperature_depth.regression)
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
 > Answer:
+The residuals refer to the 
+The r-squared value is used to understand how close the data set fits into the model, and describes the percent of variance accounted for by the explanatory vairables (correlation squared; ranges in value from 0-1). In our model, the r-squared value is 0.7387, which means that the model closely decsribes the variance between the two (73.87% of temeprature values are explained by depth).
+The p-value is 2.2e-16, which is very close to zero and indicates that there is a strong relationship between depth and temperature (we can reject the null hypothesis).
 
 
 ---
@@ -134,10 +137,17 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
-
-
+NTL_LTER_AIC <-
+  lm(data = NTL_LTER.RAW.chem.phys.wrangled, year4 ~ temperature_C)
+summary(NTL_LTER_AIC)
+step(NTL_LTER_AIC)
+ #remove year4?
 
 #10
+predicting_temp_regression <-
+  lm(data = NTL_LTER.RAW.chem.phys.wrangled, daynum ~ temperature_C)
+summary(predicting_temp_regression)
+step(predicting_temp_regression)
 
 
 ```
@@ -155,7 +165,14 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r anova.model}
 #12
+class(NTL_LTER.RAW.chem.phys.wrangled$lakename)
+NTL_LTER.RAW.chem.phys.wrangled$lakename <- as.character(NTL_LTER.RAW.chem.phys.wrangled$lakename)
 
+July_Lake_Temps.anova <-
+  aov(data = NTL_LTER.RAW.chem.phys.wrangled, "lakename" + "temperature_C")
+summary(July_Lake_Temps.anova)
+  
+  
 
 ```
 

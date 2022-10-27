@@ -92,7 +92,7 @@ NTL_LTER.RAW.chem.phys.wrangled <-
 #5.
 temperature.by.depth <-
   ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C)) + 
-  xlab(expression("Depth")) + #Change x-axis label
+  xlab(expression("Depth (m)")) + #Change x-axis label
   ylab(expression("Temperature (C)")) + #Change y-axis label
   ylim(0, 35) +  #Adjust axis to hide extreme values
   geom_point() +
@@ -165,20 +165,20 @@ step(predicting_temp_regression)
 
 ```{r anova.model}
 #12
-class(NTL_LTER.RAW.chem.phys.wrangled$lakename)
-NTL_LTER.RAW.chem.phys.wrangled$lakename <- as.character(NTL_LTER.RAW.chem.phys.wrangled$lakename)
-
-July_Lake_Temps.anova <-
-  aov(data = NTL_LTER.RAW.chem.phys.wrangled, "lakename" + "temperature_C")
+July_Lake_Temps.anova <- #One-way ANOVA test using 
+  aov(data = NTL_LTER.RAW.chem.phys.wrangled, temperature_C ~ lakename)
 summary(July_Lake_Temps.anova)
-  
-  
+
+July_Lake_Temps.anova2 <-
+  lm(data = NTL_LTER.RAW.chem.phys.wrangled, temperature_C ~ lakename)
+summary(July_Lake_Temps.anova)
+
 
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
+> Answer: The results of the ANOVA tests indicated that there is a signifcant difference in the mean temperature (C) among the lakes. The p-value from the ANOVA is <2e-16 (much less than 0.05), which means that there are significant differences between the groups in question.
 
 
 

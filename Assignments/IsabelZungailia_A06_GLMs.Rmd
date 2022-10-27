@@ -188,13 +188,12 @@ summary(July_Lake_Temps.anova)
 #14.
 LakeTemp.by.depth <-
   ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C)) +
-  geom_point() +
+  geom_point(aes(color = lakename, shape = lakename, alpha = 0.5)) + #Separate color for each lake
   geom_smooth(method = lm, color = "black", se = FALSE) + #Add a line of best fit
   xlab(expression("Depth (m)")) + #Change x-axis label
   ylab(expression("Temperature (C)")) + #Change y-axis label
   ylim(0, 35) +  #Adjust axis to hide extreme values
-  geom_point(aes(color = lakename, shape = lakename)) #Separate color for each lake
-
+  
 print(LakeTemp.by.depth)
 ```
 

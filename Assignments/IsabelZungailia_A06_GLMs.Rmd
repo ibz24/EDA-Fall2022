@@ -90,13 +90,14 @@ NTL_LTER.RAW.chem.phys.wrangled <-
           na.omit() #Omit NAs so that only complete cases exists
 
 #5.
+#Plot the relationship between depth (m) and temperature (C)
 temperature.by.depth <-
   ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C)) + 
-  xlab(expression("Depth (m)")) + #Change x-axis label
-  ylab(expression("Temperature (C)")) + #Change y-axis label
-  ylim(0, 35) +  #Adjust axis to hide extreme values
-  geom_point() +
-  geom_smooth(method = lm, color = "black") #Add a line of best fit
+   xlab(expression("Depth (m)")) + #Change x-axis label
+    ylab(expression("Temperature (C)")) + #Change y-axis label
+     ylim(0, 35) +  #Adjust axis
+      geom_point() +
+       geom_smooth(method = lm, color = "black") #Add a line of best fit
 print(temperature.by.depth)
 
 ```
@@ -104,7 +105,7 @@ print(temperature.by.depth)
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: This figure suggests that temperature (C) decreases as depth increases (m). The Distribution of points suggest...
+> Answer: This figure suggests that temperature (C) decreases as depth increases (m). The points are relatively evenly distributed on either side of the trend line, which suggests that this trend is linear. 
 
 
 7. Perform a linear regression to test the relationship and display the results
@@ -124,7 +125,7 @@ summary(temperature_depth.regression)
 #The standard error is the measure of the scatter of points around a regression line. The smaller the value, the better.
 #The correlation coefficient (r) is a measure of the strength and direction of relationship between two variables (-1 to 1)
 #The r-squared value is used to understand how close the data set fits into the model, and describes the percent of variance accounted for by the explanatory variables (correlation squared; ranges in value from 0-1). In our model, the r-squared value is 0.7387, which means that the model closely decsribes the variance between the two (73.87% of temperature values are explained by depth).
-#The p-value indicates whether the relationshp between the variables is statistically significant. In this model, the p-value is 2.2e-16, which is very close to zero and indicates that there is a strong relationship between depth and temperature (we can reject the null hypothesis). We can explain temperature by changes in depth.
+#The p-value indicates whether the relationshp between the variables is statistically significant. In this model, the p-value is 2.2e-16, which is less than 0.05 and indicates that there is a strong relationship between depth and temperature (in other words, we can reject the null hypothesis). We can explain temperature by changes in depth.
 #The residual error refers to the remainder of variance not explained by the model. In this case, it was 1.694 on 9726 degrees of freedom (the number of variables we are considering in the sample).
 #Temperature is predicted to change ___ for every 1m change in depth. 
 
@@ -140,6 +141,17 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 
 ```{r temperature.model}
 #9
+library(corrplot)
+NTL_subset <-
+  NTL_LTER.RAW.chem.phys.wrangled %>%
+  select(year4:temperature_C) %>%
+  na.omit() 
+
+NTL_Corr <- cor(NTL_subset)
+view(NTL_Corr) #Hard to visualize, can use "ellipse" to get a better visualization
+corrplot(NTL_Corr, method = "ellipse")
+corrplot.mixed(EPA_Corr, upper = "ellipse")
+
 NTL_LTER_AIC <-
   lm(data = NTL_LTER.RAW.chem.phys.wrangled, temperature_C ~ year4 + daynum + depth) #List explanatory variables
 step(NTL_LTER_AIC) #Use a stepwise regression

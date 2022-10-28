@@ -123,11 +123,11 @@ summary(temperature_depth.regression)
 
 > Answer:
 #The r-squared value is used to understand how close the data set fits into the model, and describes the percent of variance accounted for by the explanatory variables (correlation squared; ranges in value from 0-1). In our model, the r-squared value is 0.7387, which means that the model closely describes the variance between the two variables (73.87% of variability in temperature is explained by changes in depth).
-#The p-value indicates whether the relationshp between the variables is statistically significant. In this model, the p-value is 2.2e-16, which is less than 0.05 and indicates that there is a strong relationship between depth and temperature (in other words, we can reject the null hypothesis). We can explain temperature by changes in depth.
-#The residual error refers to the remainder of variance not explained by the model. In this case, it was 3.835 on 9726 degrees of freedom (the number of variables we are considering in the sample).
-#The standard error is the measure of the scatter of points around a regression line. The smaller the value, the better.
-#The correlation coefficient (r) is a measure of the strength and direction of relationship between two variables (-1 to 1).
-#Temperature is predicted to change ~1.94621 degress Celcius for every 1m change in depth. 
+The p-value indicates whether the relationshp between the variables is statistically significant. In this model, the p-value is 2.2e-16, which is less than 0.05 and indicates that there is a strong relationship between depth and temperature (in other words, we can reject the null hypothesis). We can explain temperature by changes in depth.
+The residual error refers to the remainder of variance not explained by the model. In this case, it was 3.835 on 9726 degrees of freedom (the number of variables we are considering in the sample).
+The standard error is the measure of the scatter of points around a regression line. The smaller the value, the better.
+The correlation coefficient (r) is a measure of the strength and direction of relationship between two variables (-1 to 1).
+Temperature is predicted to change ~1.94621 degress Celcius for every 1m change in depth. 
 
 ---
 
@@ -188,7 +188,8 @@ summary(July_Lake_Temps.anova2)
 #14.
 #Graph depicting temperature (C) by depth (m)
 LakeTemp.by.depth <-
-  ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C, color = lakename)) + #Separate color for each lake
+  ggplot(NTL_LTER.RAW.chem.phys.wrangled, aes(x = depth, y = temperature_C, color = lakename)) + 
+  #Separate color for each lake
   geom_point(alpha = 0.5) + #Make points 50% transparent
   geom_smooth(method = lm, se = FALSE) + #Add a line of best fit
   xlab(expression("Depth (m)")) + #Change x-axis label
@@ -204,11 +205,6 @@ print(LakeTemp.by.depth)
 #Use Tukey's HSD test to determine which lakes have different means
 TukeyHSD(July_Lake_Temps.anova)
 
-#HSD.test to extract groupings for pairwise relationships (referenced in question #17)
-July_Lake_Temps.Groups <-
- HSD.test(July_Lake_Temps.anova, "lakename", group = TRUE)
-July_Lake_Temps.Groups
-
 ```
 
 16.From the findings above, which lakes have the same mean temperature, statistically speaking, as Peter Lake? Does any lake have a mean temperature that is statistically distinct from all the other lakes?
@@ -217,7 +213,7 @@ July_Lake_Temps.Groups
 
 17. If we were just looking at Peter Lake and Paul Lake. What's another test we might explore to see whether they have distinct mean temperatures? 
 
->Answer: We could use the HSD.test to extract groupings for pairwise relationships and explore whether the lakes have distinct mean temperatures.
+>Answer: We could use a two-sample t-test to test the hypothesis that the mean temperatures of the Peter Lake and Paul Lake are equivalent. HSD.test to extract groupings for pairwise relationships and explore whether the lakes have distinct mean temperatures.
 
 
 18. Wrangle the July data to include only records for Crampton Lake and Ward Lake. Run the two-sample T-test on these data to determine whether their July temperature are same or different. What does the test say? Are the mean temperatures for the lakes equal? Does that match you answer for part 16?

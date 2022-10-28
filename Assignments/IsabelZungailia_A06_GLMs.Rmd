@@ -222,7 +222,7 @@ TukeyHSD(July_Lake_Temps.anova)
 #Wrangle the July data to include only records for Crampton Lake and Ward Lake
 wrangled.Crampton_Ward <-
   NTL_LTER.RAW.chem.phys.wrangled %>% 
-  filter(lakename == "Crampton Lake" | lakename == "Ward Lake") #Only include records for Crampton Lake and Ward Lake
+  filter(lakename == "Crampton Lake" | lakename == "Ward Lake")
 
 #Two-sample t-test
 Crampton_Ward_t.test <- t.test(wrangled.Crampton_Ward$temperature_C ~ wrangled.Crampton_Ward$lakename)

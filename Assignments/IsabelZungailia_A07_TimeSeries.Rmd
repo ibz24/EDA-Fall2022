@@ -1,6 +1,6 @@
 ---
 title: "Assignment 7: Time Series Analysis"
-author: "Student Name"
+author: "Isabel Zungailia"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -30,8 +30,37 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 2. Import the ten datasets from the Ozone_TimeSeries folder in the Raw data folder. These contain ozone concentrations at Garinger High School in North Carolina from 2010-2019 (the EPA air database only allows downloads for one year at a time). Import these either individually or in bulk and then combine them into a single dataframe named `GaringerOzone` of 3589 observation and 20 variables. 
 
 ```{r, message = FALSE}
-#1
+#1.
+#Check working directory
+  getwd()
 
+#Load packages
+  library(tidyverse)
+  library(lubridate)
+  library(trend)
+  library(zoo)
+  library(Kendall)
+
+#Set ggplot theme
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
+
+#2. Import datasets (10) from the Ozone_TimeSeries folder in the Raw data folder
+GaringerNC2010 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2011 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2012 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2013 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2014 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2015 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2016 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2017 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2018 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv", stringsAsFactors = TRUE)
+
+#Combine 10 datasets into a single dataframe named `GaringerOzone`
+GaringerOzone <- rbind(GaringerNC2010, GaringerNC2011, GaringerNC2012, GaringerNC2013, GaringerNC2014, GaringerNC2015, GaringerNC2016, GaringerNC2017, GaringerNC2018, GaringerNC2019)
 ```
 
 ## Wrangle
@@ -45,13 +74,25 @@ The completed exercise is due on Tuesday, March 16 at 11:59 pm.
 6. Use a `left_join` to combine the data frames. Specify the correct order of data frames within this function so that the final dimensions are 3652 rows and 3 columns. Call your combined data frame GaringerOzone. 
 
 ```{r}
-# 3
+#3.
+#Set date column as date class
+class(GaringerOzone$Date)
+GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
+class(GaringerOzone$Date)
 
-# 4
+#4. Wrangle dataset so that it only contains the columns Date, Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE
+GaringerOzone.wrangled <-
+  GaringerOzone %>% 
+    select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
-# 5
+#5. Create a new data frame that contains a sequence of dates from 2010-01-01 to 2019-12-31
+GaringerOzone.complete <-
+  GaringerOzone.wrangled %>% 
+    drop_na(Daily.Max.8.hour.Ozone.Concentration)
 
-# 6
+
+
+#6.
 
 
 ```

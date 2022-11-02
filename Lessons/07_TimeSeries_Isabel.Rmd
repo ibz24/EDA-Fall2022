@@ -136,6 +136,10 @@ EnoDischarge.late_Decomposed <- stl(EnoDischarge.late_ts, s.window = "periodic")
 plot(EnoDischarge.late_Decomposed)
 
     #Plots the seasonal component, trend component, and the random component
+    #Bar (on the right sides of the plots)represents the variability of the datasets
+    #Larger the gray bar, the smaller the variability of the component in the dataset (seasonal component is bigger than the trend component) 
+    #The smaller the bar, the higher the representedness of that variable in your data
+    #Remainder is the hardest variable to forecast...
 
 # We can extract the components and turn them into data frames
 EnoDischarge.late_Components <- as.data.frame(EnoDischarge.late_Decomposed$time.series[,1:3])
@@ -214,7 +218,7 @@ ggplot(wind_data_clean ) +
 ```
 
 ### Monotonic trend analysis, continued
-
+  #always upward or always downward
 Specific tests for monotonic trend analysis are listed below, with assumptions and tips: 
 
 * **linear regression**: no seasonality, fits the assumptions of a parametric test. Function: `lm`
@@ -235,6 +239,13 @@ Note that wind speed has a seasonal cycle. We might be interested in knowing how
 
 
 ```{r}
+#decompose series, remove seasonal components, then run the time series test
+#there is also something called a Seasonal Mann-Kendall test (breaks data down into seasons and draws comparisons)
+#doesn't always give the same results...
+#Mann-Kendall is not good for detecting stochastic trends (use ADF instead) --> always start with the ADF to see if a stochastic trend exists (and if it doesn't, use the Mann-Kendall)
+
+#For time series, we need to convert data frames to time series objects...but then convert back to data frame for visualization
+#To interpret Mann-Kendall: if s is positive, trend is increasing; if s is negative, trend is decreasing 
 
 # Generate time series (trend test needs ts, not data.frame)
 f_month <- month(first(wind_data_clean$DATE)) #first month on the first observation for this date

@@ -90,8 +90,6 @@ GaringerOzone.complete <-
   GaringerOzone.wrangled %>% 
     drop_na(Daily.Max.8.hour.Ozone.Concentration)
 
-
-
 #6.
 
 

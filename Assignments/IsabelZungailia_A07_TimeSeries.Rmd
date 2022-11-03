@@ -204,14 +204,13 @@ print(MeanMonthlyOzone.plot)
 
 ```{r}
 #15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`
-GaringerOzone.monthly.decomposed <- stl(GaringerOzone.monthly.ts, s.window = "periodic")
-plot(GaringerOzone.monthly.vdecomposed)
+GaringerOzone.monthly.nonseasonal <- GaringerOzone.monthly.ts - GaringerOzone.monthly.decomposed$time.series[,1]
 
 #16. Run the Mann Kendall test on the non-seasonal Ozone monthly series
-GaringerOzone.monthly.ts2 <- ts(GaringerOzone.decomposed$mean_monthly_03, start = c(2010, 01), frequency = 12)
+GaringerOzone.monthly.MannKendall <- Kendall::MannKendall(GaringerOzone.monthly.nonseasonal)
+GaringerOzone.monthly.MannKendall
 
-GaringerOzone_trend2 <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts2)
-GaringerOzone_trend2
+summary(GaringerOzone.monthly.MannKendall)
 
 ```
 

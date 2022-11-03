@@ -133,6 +133,7 @@ GaringerOzone.clean <-
 
 ```{r}
 #9
+Garinger.Ozone.monthly <- mutate(GaringerOzone2$Date)
 
 ```
 
@@ -141,6 +142,9 @@ GaringerOzone.clean <-
 
 ```{r}
 #10
+GaringerOzone.daily.ts <- ts()
+GaringerOzone.monthly.ts <- ts()
+
 
 ```
 

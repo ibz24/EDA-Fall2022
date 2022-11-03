@@ -177,7 +177,6 @@ plot(GaringerOzone.monthly.decomposed)
 #12. Monotonic trend analysis - seasonal Mann-Kendall test
 GaringerOzone_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 GaringerOzone_trend
-
 #The p-value 0.046724 P-value is only a little significant...
 
 ```

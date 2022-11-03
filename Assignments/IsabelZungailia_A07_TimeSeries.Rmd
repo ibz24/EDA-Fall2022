@@ -213,7 +213,6 @@ GaringerOzone.monthly.ts2 <- ts(GaringerOzone.decomposed$mean_monthly_03, start 
 GaringerOzone_trend2 <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts2)
 GaringerOzone_trend2
 
-
 ```
 
 > Answer: 

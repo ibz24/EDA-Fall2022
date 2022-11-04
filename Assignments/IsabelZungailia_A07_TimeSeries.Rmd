@@ -74,8 +74,7 @@ GaringerOzone <- rbind(GaringerNC2010, GaringerNC2011, GaringerNC2012, GaringerN
 6. Use a `left_join` to combine the data frames. Specify the correct order of data frames within this function so that the final dimensions are 3652 rows and 3 columns. Call your combined data frame GaringerOzone. 
 
 ```{r}
-#3.
-#Set date column as date class
+#3. Set date column as date class
 class(GaringerOzone$Date)
 GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
 class(GaringerOzone$Date)
@@ -88,6 +87,7 @@ GaringerOzone.wrangled <-
 #5. Create a new data frame that contains a sequence of dates from 2010-01-01 to 2019-12-31
 Days <- as.data.frame(seq.Date(from = as.Date("2010-01-01"), to = as.Date("2019-12-31"), by = "day"))
 
+#Rename column name to Date
 colnames(Days) <- c("Date")
 
 #6. Combine the two data frames using a 'left_join'
@@ -99,7 +99,7 @@ GaringerOzone2 <- left_join(Days, GaringerOzone.wrangled)
 7. Create a line plot depicting ozone concentrations over time. In this case, we will plot actual concentrations in ppm, not AQI values. Format your axes accordingly. Add a smoothed line showing any linear trend of your data. Does your plot suggest a trend in ozone concentration over time?
 
 ```{r}
-#7.Create a line plots that shows ozone concentrations (ppm) over time. 
+#7.Create a line plots that shows ozone concentrations (ppm) over time
 OzoneConcentrations <- ggplot(GaringerOzone2, aes(x = Date, y = Daily.Max.8.hour.Ozone.Concentration)) +
   geom_line() +
   labs(x = "Date", y = "Ozone Concentration (ppm)") + #Rename axis
@@ -108,7 +108,7 @@ OzoneConcentrations <- ggplot(GaringerOzone2, aes(x = Date, y = Daily.Max.8.hour
 plot(OzoneConcentrations)
 ```
 
->Answer: This plot suggests that that ozone concentrations remain relatively stable over time, despite fluctuations throughout the seasons. 
+>Answer: This plot suggests that that ozone concentrations have remained relatively stable over time, despite fluctuations throughout the seasons. The slope of the trend line is relatively flat, and the visible trend is likely due to seasonality. 
 
 ## Time Series Analysis
 
@@ -121,12 +121,12 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration <- na.approx(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
 summary(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
 
-#Fill in missing daily data for AQI values
+#[Not asked for in the question...fill in missing daily data for AQI values]
 GaringerOzone2$DAILY_AQI_VALUE <- na.approx(GaringerOzone2$DAILY_AQI_VALUE)
 summary(GaringerOzone2$DAILY_AQI_VALUE)
 ```
 
-> Answer: Interpolation is a common method used to replace missing values in a dataset. It is important to note that we want to replace the missing values through interpolation - we do NOT want to remove them completely. Interoplation will not change the main properties of the distribution (min, max, mean, etc). Linear interpolations are a "connect the dots" approach - missing data values are assumed to fall between the previous and next measurement. A straight line is drawn between the two predetermined values. 
+> Answer: Interpolation is a common method used to replace missing values in a dataset. It is important to note that we want to replace the missing values through interpolation to create a continuous observation - we do NOT want to remove them completely. Interoplation will not change the main properties of the distribution (min, max, mean, etc). Linear interpolations are a "connect the dots" approach - missing data values are assumed to fall between the previous and next measurement. A straight line is drawn between the two predetermined values. 
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -139,7 +139,9 @@ GaringerOzone.monthly <-
   mutate(Year = year(Date)) %>% #Add year column
   mutate(month_year = my(paste(Month,"-",Year))) %>% #Create a new Date column
   group_by(month_year) %>% 
-  summarize(mean_monthly_03 = mean(Daily.Max.8.hour.Ozone.Concentration)) #Mean ozone concentrations
+  summarize(mean_monthly = mean(Daily.Max.8.hour.Ozone.Concentration)) #Mean ozone concentrations
+
+summary(GaringerOzone.monthly)
   
 ```
 
@@ -152,7 +154,7 @@ GaringerOzone.daily.ts <- ts(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration
 frequency = 365)
 
 #Create a time series object named `GaringerOzone.monthly.ts`
-GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$mean_monthly_03, start = c(2010, 01),
+GaringerOzone.monthly.ts <- ts(GaringerOzone.monthly$mean_monthly, start = c(2010, 01),
 frequency = 12)
 
 ```
@@ -177,7 +179,6 @@ plot(GaringerOzone.monthly.decomposed)
 #12. Monotonic trend analysis - seasonal Mann-Kendall test
 GaringerOzone_trend <- Kendall::SeasonalMannKendall(GaringerOzone.monthly.ts)
 GaringerOzone_trend
-#The p-value 0.046724 P-value is only a little significant...
 
 ```
 
@@ -187,7 +188,7 @@ GaringerOzone_trend
 
 ```{r}
 #13. Plot monthly ozone concentrations over time
-MeanMonthlyOzone.plot <- ggplot(GaringerOzone.monthly, aes(x = month_year, y = mean_monthly_03)) +
+MeanMonthlyOzone.plot <- ggplot(GaringerOzone.monthly, aes(x = month_year, y = mean_monthly)) +
   geom_point() +
   geom_line() +
   labs(x = "Date", y = "Mean Monthly Ozone Concentration (ppm)")
@@ -196,7 +197,7 @@ print(MeanMonthlyOzone.plot)
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: The research question asked: Have ozone concentrations changed over the 2010s at this station? The p-value 0.046724 P-value is only a little significant...
+> Answer: The research question asked: Have ozone concentrations changed over the 2010s at this station? This graphs displays the fluctuation of ozone concentrations throughout the 2010s. During the winter months (particularly December and January), the mean ozone concentrations are the lowest, and the highest values are seen during the summer months (particularly May-August). The minimum value of ozone concentration during this time frame was 0.02342 ppm, the maximum ozone concentration value was 0.06623 ppm (on 2011-06-01), and the mean value was 0.04149 ppm. The seasonal Mann-Kendall test was generated a tau value of -0.143 and a p-value of ~0.046724. The p-value is very close to 0.05, which suggests that the relationship between ozone concentrations and time has only a small level of significance.
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
@@ -214,4 +215,5 @@ summary(GaringerOzone.monthly.MannKendall)
 
 ```
 
-> Answer: 
+> Answer: After subtracting the seasonal component from the running the `GaringerOzone.monthly.ts` and 
+re-running the Mann Kendall test on the non-seasonal Ozone monthly series, the tau value comes out to -0.165 and the p-value is 0.0075402. This p-value is significantly smaller than the value from the seasonal Mann Kendall test in #12, which suggests that there is a significant trend in the time series that is not due to seasonality.

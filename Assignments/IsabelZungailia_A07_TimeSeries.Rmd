@@ -48,16 +48,26 @@ mytheme <- theme_classic(base_size = 14) +
 theme_set(mytheme)
 
 #2. Import datasets (10) from the Ozone_TimeSeries folder in the Raw data folder
-GaringerNC2010 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2011 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2012 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2013 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2014 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2015 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2016 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2017 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2018 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv", stringsAsFactors = TRUE)
-GaringerNC2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv", stringsAsFactors = TRUE)
+GaringerNC2010 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2011 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2012 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2013 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2014 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2015 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2016 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2017 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2018 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv", 
+                           stringsAsFactors = TRUE)
+GaringerNC2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv", 
+                           stringsAsFactors = TRUE)
 
 #Combine 10 datasets into a single dataframe named `GaringerOzone`
 GaringerOzone <- rbind(GaringerNC2010, GaringerNC2011, GaringerNC2012, GaringerNC2013, GaringerNC2014, GaringerNC2015, GaringerNC2016, GaringerNC2017, GaringerNC2018, GaringerNC2019)
@@ -79,7 +89,8 @@ class(GaringerOzone$Date)
 GaringerOzone$Date <- as.Date(GaringerOzone$Date, format = "%m/%d/%Y")
 class(GaringerOzone$Date)
 
-#4. Wrangle dataset so that it only contains the columns Date, Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE
+#4. Wrangle dataset so that it only contains the columns Date, 
+# Daily.Max.8.hour.Ozone.Concentration, and DAILY_AQI_VALUE
 GaringerOzone.wrangled <-
   GaringerOzone %>% 
     select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
@@ -90,7 +101,8 @@ Days <- as.data.frame(seq.Date(from = as.Date("2010-01-01"), to = as.Date("2019-
 #Rename column name to Date
 colnames(Days) <- c("Date")
 
-#6. Combine the two data frames using a 'left_join' (named it "GarignerOzone2" since I already had a "GaringerOzone" data frame)
+#6. Combine the two data frames using a 'left_join' 
+# (named it "GarignerOzone2" since I already had a "GaringerOzone" data frame)
 GaringerOzone2 <- left_join(Days, GaringerOzone.wrangled)
 ```
 
@@ -118,7 +130,9 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 
 ```{r}
 #8. Use a linear interpolation to fill in missing daily data for ozone concentration
-GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration <- na.approx(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
+GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration <- 
+  na.approx(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
+
 summary(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
 
 #[Not asked for in the question...fill in missing daily data for AQI values]
@@ -205,7 +219,8 @@ print(MeanMonthlyOzone.plot)
 
 ```{r}
 #15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`
-GaringerOzone.monthly.nonseasonal <- GaringerOzone.monthly.ts - GaringerOzone.monthly.decomposed$time.series[,1]
+GaringerOzone.monthly.nonseasonal <- 
+  GaringerOzone.monthly.ts - GaringerOzone.monthly.decomposed$time.series[,1]
 
 #16. Run the Mann Kendall test on the non-seasonal Ozone monthly series
 GaringerOzone.monthly.MannKendall <- Kendall::MannKendall(GaringerOzone.monthly.nonseasonal)

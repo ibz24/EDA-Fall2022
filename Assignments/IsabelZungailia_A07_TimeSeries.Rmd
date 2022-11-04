@@ -90,7 +90,7 @@ Days <- as.data.frame(seq.Date(from = as.Date("2010-01-01"), to = as.Date("2019-
 #Rename column name to Date
 colnames(Days) <- c("Date")
 
-#6. Combine the two data frames using a 'left_join'
+#6. Combine the two data frames using a 'left_join' (named it "GarignerOzone2" since I already had a "GaringerOzone" data frame)
 GaringerOzone2 <- left_join(Days, GaringerOzone.wrangled)
 ```
 
@@ -126,7 +126,7 @@ summary(GaringerOzone2$Daily.Max.8.hour.Ozone.Concentration)
 #summary(GaringerOzone2$DAILY_AQI_VALUE)
 ```
 
-> Answer: Interpolation is a common method used to replace missing values in a dataset. It is important to note that we want to replace the missing values through interpolation to create a continuous observation - we do NOT want to remove them completely. Interoplation will not change the main properties of the distribution (min, max, mean, etc). Linear interpolations are a "connect the dots" approach - missing data values are assumed to fall between the previous and next measurement. A straight line is drawn between the two predetermined values to generate an average value for the missing values. For this dataset, a linear interpolation was used instead of a piecewise constant or spline interpolation methods. The piecewise constant, often referred to as the "nearest neightbor" approach, assigns missing data to be equal to the measurement nearest to that date. Spline is similar to a linear interpretation except for that fact that it uses a quadratic function to interpolate (rather than a straight line). The linear interpretation is the best method to use for this dataset because it provides the most reasonable method for averaging out ozone concentration values.
+> Answer: Interpolation is a common method used to replace missing values in a dataset. It is important to note that we want to replace the missing values through interpolation to create a continuous observation - we do NOT want to remove them completely. Interoplation will not change the main properties of the distribution (min, max, mean, etc). Linear interpolations are a "connect the dots" approach - missing data values are assumed to fall between the previous and next measurement. A straight line is drawn between the two predetermined values to generate an average value for the missing values. For this dataset, a linear interpolation was used instead of a piecewise constant or spline interpolation methods. The piecewise constant, often referred to as the "nearest neightbor" approach, assigns the missing data to be equal to the measurement nearest to that date. Spline is similar to a linear interpretation except for that fact that it uses a quadratic function to interpolate (rather than a straight line). The linear interpretation is the best method to use for this dataset because it provides the most reasonable method for averaging out ozone concentration values.
 
 
 9. Create a new data frame called `GaringerOzone.monthly` that contains aggregated data: mean ozone concentrations for each month. In your pipe, you will need to first add columns for year and month to form the groupings. In a separate line of code, create a new Date column with each month-year combination being set as the first day of the month (this is for graphing purposes only)
@@ -137,7 +137,7 @@ GaringerOzone.monthly <-
   GaringerOzone2 %>% 
   mutate(Month = month(Date)) %>% #Add month column
   mutate(Year = year(Date)) %>% #Add year column
-  mutate(month_year = my(paste(Month,"-",Year))) %>% #Create a new Date column
+  mutate(month_year = my(paste(Month,"-",Year))) %>% #Create a new date column
   group_by(month_year) %>% 
   summarize(mean_monthly = mean(Daily.Max.8.hour.Ozone.Concentration)) #Mean ozone concentrations
 
@@ -197,7 +197,7 @@ print(MeanMonthlyOzone.plot)
 
 14. To accompany your graph, summarize your results in context of the research question. Include output from the statistical test in parentheses at the end of your sentence. Feel free to use multiple sentences in your interpretation.
 
-> Answer: The research question asked: Have ozone concentrations changed over the 2010s at this station? This graphs displays the fluctuation of ozone concentrations throughout the 2010s. During the winter months (particularly December and January), the mean ozone concentrations are the lowest, and the highest values are seen during the summer months (particularly May-August). The minimum value of ozone concentration during this time frame was 0.02342 ppm, the maximum ozone concentration value was 0.06623 ppm (on 2011-06-01), and the mean value was 0.04149 ppm. The seasonal Mann-Kendall test was generated a tau value of -0.143 and a p-value of ~0.046724. The p-value is very close to 0.05, which suggests that the relationship between ozone concentrations and time has only a small level of significance.
+> Answer: The research question asked: Have ozone concentrations changed over the 2010s at this station? This graphs displays the fluctuation of ozone concentrations throughout the 2010s. During the winter months (particularly December and January), the mean ozone concentrations are the lowest, and the highest values are seen during the summer months (particularly May-August). The minimum value of ozone concentration during this time frame was 0.02342 ppm, the maximum ozone concentration value was 0.06623 ppm (on 2011-06-01), and the mean value was 0.04149 ppm. The seasonal Mann-Kendall test generated a tau value of -0.143 and a p-value of ~0.046724. The p-value is very close to 0.05, which suggests that the relationship between ozone concentrations and time has only a small level of significance. The tau value is used to interpret the strength of the relationship between the variables (ranges between -1 and 1), and a negative tau value indicates that the variables are inversely related. 
 
 15. Subtract the seasonal component from the `GaringerOzone.monthly.ts`. Hint: Look at how we extracted the series components for the EnoDischarge on the lesson Rmd file.
 
@@ -216,4 +216,4 @@ summary(GaringerOzone.monthly.MannKendall)
 ```
 
 > Answer: After subtracting the seasonal component from the running the `GaringerOzone.monthly.ts` and 
-re-running the Mann Kendall test on the non-seasonal Ozone monthly series, the tau value comes out to -0.165 and the p-value is 0.0075402. This p-value is significantly smaller than the value from the seasonal Mann Kendall test in #12, which suggests that there is a significant trend in the time series that is not due to seasonality.
+re-running the Mann Kendall test on the non-seasonal Ozone monthly series, the tau value comes out to -0.165 and the p-value is 0.0075402. This p-value is significantly smaller than the value from the seasonal Mann Kendall test in #12 (0.046724), which suggests that there is a significant trend in the time series that is not due to seasonality. Additionally, the tau value is used to interpret the strength of the relationship between the variables (ranges between -1 and 1), and a negative tau value (-0.165) indicates that the variables are inversely related. 

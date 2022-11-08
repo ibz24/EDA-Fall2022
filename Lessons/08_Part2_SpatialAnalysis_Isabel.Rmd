@@ -51,6 +51,7 @@ library(lubridate)
 library(sf)
 library(mapview)
 library(RColorBrewer)
+library(leaflet)
 ```
 
 # 2 READING IN SPATIAL DATA
@@ -63,21 +64,24 @@ First, we'll read in our EPA air quality sites, as we did in the previous exerci
 #Read our EPA points into a spatial dataframe
 epa_pm25_sites_sf <- read_csv('./Data/Raw/EPAair_PM25_NC2018_raw.csv') %>% 
   group_by(`Site Name`, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
-  summarize(
+  summarize(   #Collapse by site and calculate mean and max for each site
     meanPM = mean(`Daily Mean PM2.5 Concentration`,na.rm=T),
     maxPM = max(`Daily Mean PM2.5 Concentration`,na.rm=T)
     ) %>% 
-  st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'), crs=4269)
+  st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'), crs=4269) #convert into a spatial features object (specify x and y values)
 
 #Inspect the object
 class(epa_pm25_sites_sf)
 
 #What is its CRS again?
 st_crs(epa_pm25_sites_sf)$epsg
+#4269 - NAD 1983, geographic coordinate system (unit = degrees)
 
 #Plot the data
 ggplot(data=epa_pm25_sites_sf) +
   geom_sf()
+
+mapview(epa_pm25_sites_sf)
 ```
 
 ## 2.2 Reading shapefiles into R with `sf`
@@ -93,6 +97,10 @@ Below we read in the USA counties shapefile, filtering for just the NC features 
 counties_sf<- st_read('./Data/Spatial/cb_2018_us_county_20m.shp') %>% 
   filter(STATEFP == 37) #Filter for just NC Counties
 
+#we can filter for a specific state (this is census data)
+#NC is FP37
+#these will be polygons (2 coordinate pairs)
+
 #
 colnames(counties_sf)
 
@@ -101,16 +109,19 @@ st_crs(counties_sf)
 
 
 #
-nrow(counties_sf)
+nrow(counties_sf) #100 rows
 
 #Reveal the extent of this dataset via the st_bbox() function
-st_bbox(counties_sf)
+st_bbox(counties_sf) #spatial command, creates a spatial bounding box around the feature
+
 
 #View the data
 head(counties_sf)
 
 #Plot the data, colored by area of land in each county
+mapView(counties_sf, zcol = "ALAND")
 mapView(counties_sf, zcol = "AWATER")
+  #mapping a polygon dataset
 ```
 
 ### 2.2.2 Read in and explore 8-digit HUC watersheds for NC
@@ -119,21 +130,20 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-
+HUC8_sf <- st_read('./Data/Spatial/NCHUC8.shp')
 
 #Reveal the columns
+colnames(HUC8_sf)
 
 
 #Check the CRS
-
+st_crs(HUC8_sf) 
 
 #Examine some records
-head(huc8_sf)
+head(HUC8_sf)
 
 #View the data as a map, colored by the acreage in each
-
-
-
+mapView(HUC8_sf, zcol = "ACRES")
 
 ```
 
@@ -143,13 +153,12 @@ head(huc8_sf)
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
-
+upperNeuse_sf <- st_read('./Data/Spatial/NCHUC8.shp') %>% 
+  filter(SUBBASIN == 'Upper Neuse')
 
 #Create a map
-
-
-
+ mapView(HUC8_sf, col.regions = 'orange') +
+ mapview(upperNeuse_sf, col.regions = 'purple')
 
 ```
 
@@ -164,6 +173,8 @@ If you have difficulty, the link you want is: - <https://opendata.arcgis.com/dat
 This a link to a spatial dataset in GeoJSON format. Now let's read this dataset in and explore it:
 
 ```{r load.geojson.data}
+# [we can also download the shapefile and load it in like we did earlier on in this lesson]
+# Copy the web address (doesb't load to our harddrive)
 powerplants_sf <- st_read('https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson')
 
 #Reveal the field names
@@ -174,10 +185,13 @@ nrow(powerplants_sf)
 
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
+mapview(powerplants_sf$geometry)
 
 #Filter for just powerplants found in NC
 nc_powerplants_sf <- powerplants_sf %>% 
   filter(STATE == "NC") 
+
+mapview(nc_powerplants_sf)
 
 #Have a look the variety of types (and number of each)
 nc_powerplants_sf %>% 
@@ -212,8 +226,11 @@ We'll focus on just a few variables: Estimates of people in poverty ("E_POV") an
 #Read the 2018 SVI county-level dataset for NC
 svi2018_nc_raw <- read.csv(
   'https://svi.cdc.gov/Documents/Data/2018_SVI_Data/CSV/States_Counties/NorthCarolina_COUNTY.csv',
-  colClasses = c('FIPS' = 'factor')) %>% 
+  colClasses = c('FIPS' = 'factor')) %>%  #a lot of datasets will have numeric codes that you don't want to bring in as a "number", keep it as a "character"; we want to read in the FIPS number as a "factor"
   select(COUNTY, FIPS, LOCATION, E_TOTPOP, E_POV, E_MINRTY)
+ 
+#(estimate of people in poverty, estimate of people in the minority)
+
 
 #Check structure
 str(svi2018_nc_raw)
@@ -223,16 +240,17 @@ counties_sf_join <-  merge(x = counties_sf,
                            y = svi2018_nc_raw, 
                            by.x = "GEOID", 
                            by.y = "FIPS" )
+  #specify our x and y tables, and list the two common fields --> GEOID & FIPS
 
-#Tidyverse version of the join
+#Tidyverse version of the join (another method)
 counties_sf_join <- counties_sf %>% 
   left_join(svi2018_nc_raw, by = c("GEOID" = "FIPS") )
 
 #View with mapview
 mapview(counties_sf_join, 
-        zcol = 'E_POV', 
-        col.regions = brewer.pal(2, 'RdBu')) + 
-  mapview(epa_pm25_sites_sf, cex = 'maxPM')
+        zcol = 'E_POV', #color by people in poverty
+        col.regions = brewer.pal(2, 'RdBu')) + #add a color ramp
+  mapview(epa_pm25_sites_sf, cex = 'maxPM') #add another map of EPA sites
 
 #view with ggplot
 ggplot() + 
@@ -246,26 +264,27 @@ ggplot() +
 
 ```{r}
 #Compute HUC8 wind energy
+wind_energy_huc8 <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv', colClasses = c('HUC_12' = 'factor')) %>% 
+  mutate(HUC_8 = substr(HUC_12,1,8)) %>%  
+  group_by(HUC_8) %>% 
+  summarize(kwhkm2day = sum(kwhkm2day))
 
-
-
-
-
+#create a HUC_8 column...specify a string and we want to grab the first 8 to generate HUC_8
+#this dataset doesn't have any geographic data
   
+
 #Join to HUC_8 features
-
-
-
-
+huc8_sf_wind <- HUC8_sf %>% 
+  left_join(wind_energy_huc8, by = c('HUC_8', 'HUC_8'))
+  
+  
+  merge(x = HUC8_sf,
+                      y = wind_energy_huc8, 
+                      by.x = "HUC_8", 
+                      by.y = "HUC_8")
 
 #View the outputs
-
-
-
-
-
-
-
+mapview(huc8_sf_wind, zcol = 'kwhkm2day')
 ```
 
 ## 3.1 Spatial data aggregation with `group_by` and `summarize`.
@@ -278,7 +297,7 @@ In our case, all of our county features share the same "STATEFP" value, so we'll
 #Aggregate the data using group_by and summarize, just as you would a non-spatial dataframe
 state_sf <- counties_sf %>% 
   group_by('STATEFP') %>% 
-  summarize(ALAND = sum(ALAND))
+  summarize(ALAND = sum(ALAND)) #calculate total area of land in NC
 
 #View the data
 mapview(state_sf)
@@ -301,6 +320,16 @@ huc2_sf <- huc8_sf %>%
 
 #Map the data
 ggplot() + geom_sf(data=huc2_sf,aes(fill=acres))
+
+#CHALLENGE
+unique(HUC8_sf$DWQ_Basin)
+
+huc2_sf <- HUC8_sf %>% 
+  group_by(DWQ_Basin) %>% 
+  summarize(
+    ACRES = sum(ACRES),
+    SQ_MILE = sum(SQ_MILES)
+  )
 
 ```
 
@@ -329,7 +358,7 @@ On top of projecting any geographic data to adjust for the limitations of the so
 epa_sf_utm <-      st_transform(epa_pm25_sites_sf, crs = 26917)
 counties_sf_utm <- st_transform(counties_sf, crs = 26917)
 state_sf_utm <-    st_transform(state_sf,crs = 26917)
-huc8_sf_utm <-     st_transform(huc8_sf, crs = 26917)
+huc8_sf_utm <-     st_transform(HUC8_sf, crs = 26917)
 huc2_utm <-        st_transform(huc2_sf, crs = 26917)
 ```
 
@@ -380,17 +409,20 @@ mapview(neuse_counties_sf, zcol='Area_m2')
 
 ```{r EXERCISE: Clipping}
 #Select the Triangle County from the 
-
+the_triangle <- counties_sf_utm %>% 
+  filter(NAME %in% c("Chatham","Durham","Orange", "Wake"))
 
   
 #Grab the intersecting HUC_8s
+the_hucs <- huc8_sf_utm[the_triangle,]
 
-
+mapview(the_hucs) + mapview(the_triangle, alpha.regions = 0, color = 'red')
 
 #Intersect the HUC_8s
+the_huc_clip <- huc2_utm %>% 
+  st_intersection(the_triangle)
 
-
-
+mapview(the_huc_clip) + mapview(the_triangle, alpha.regions = 0, color = 'red')
 ```
 
 ## 3.3 Geometry manipulations
@@ -477,8 +509,6 @@ mapView(counties_sf[resultMask,])
 the_site_counties <- theSite_sfc_transformed %>% 
   st_buffer(.,dist=30000)
 
-
-                            
 ```
 
 # 4. VISUALIZATION
@@ -516,13 +546,13 @@ Leaflet is the most powerful of the three. However it requires getting all our d
 EPAair_wgs84 <- st_transform(epa_pm25_sites_sf, c=4326)
 counties_WGS84 <- st_transform(counties_sf_utm, c=4326)
 state_WGS84 <- st_transform(state_sf,c=4326)
-huc8s_WGS84 <- st_transform(huc8_sf,c=4326)
+huc8s_WGS84 <- st_transform(HUC8_sf,c=4326)
 huc2_WGS84<- st_transform(huc2_sf,c=4326)
 
 #Now plot with leaflet: no errors as all layers are in Leaflet's native CRS (WGS84)
 leaflet() %>% addTiles() %>% 
   addPolygons(data=counties_WGS84,weight=1,color='red') %>% 
-  addPolygons(data=huc8_sf,weight=1)
+  addPolygons(data=HUC8_sf,weight=1)
 ```
 
 ### 4.2.2 Changing basemaps in Leaflet

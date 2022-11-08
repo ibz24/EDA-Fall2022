@@ -30,11 +30,14 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 2. Import libraries: tidyverse, sf, leaflet, and mapview
 
 ```{r Prepare workspace}
-#1.
+#1.Check working directory
+getwd()
 
-
-#2. 
-
+#2. Load necessary packages
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(mapview)
 
 ```
 
@@ -48,18 +51,26 @@ In this exercise, we will be exploring stream gage height data in Nebraska corre
 
 ```{r Read the county data into an sf dataframe}
 #3. Read in Counties shapefile into an sf dataframe, filtering for just NE counties
-
+counties_sf<- st_read('./Data/Spatial/cb_2018_us_county_20m.shp') %>% 
+  filter(STATEFP == 31)           #Filter for just NE Counties (FIPS code is 31)
 
 #4. Reveal the CRS of the counties features
+st_crs(counties_sf)
 
+#View column names
+colnames(counties_sf)
+#Check number of rows --> 93 counties 
+nrow(counties_sf) 
 
 #5. Plot the data
+mapview(counties_sf)
+st_crs(counties_sf)$epsg
 
 ```
 
 6. What is the EPSG code of the Counties dataset? Is this a geographic or a projected coordinate reference system? (Or, does this CRS use angular or planar coordinate units?) To what datum is this CRS associated? (Tip: look the EPSG code on <https://spatialreference.org>) 
 
-> ANSWER: 
+> ANSWER: An EPSG code is a specific code that is used look up a specific coordinate reference system (crs). The EPSG code of the counties dataset is 4629, which is associated with the North American Datum 1983 datum (NAD83). This is a geographic coordinate system with degrees as units. 
 > 
 
 
@@ -73,15 +84,16 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 
 ```{r Read in USGS Gage Locations}
 #7. Read in gage locations csv as a dataframe
-
+GageLocations <- read.csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv", stringsAsFactors = TRUE)
+  #do we need to do anything else here?
 
 #8. Reveal the names of the columns
-
+colnames(GageLocations)
 
 ```
 
 9. What columns in the dataset contain the x and y coordinate values, respectively?  
-> ANSWER:
+> ANSWER: The x and y coordinate values are in the columns "dec_lat_va" and "dec_long_va".
 > 
 
 
@@ -94,16 +106,17 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 
 ```{r Convert dataframe to sf dataframe}
 #10. Convert to an sf object
-
-
+GageLocations.sf <- GageLocations %>% 
+  st_as_sf(coords = c('dec_long_va', 'dec_lat_va'), crs=4629)
+  
 #11. Re-examine the column names
-
+colnames(GageLocations.sf) 
 
 ```
 
 12. What new field(s) appear in the sf dataframe created? What field(s), if any, disappeared?
 
->ANSWER: 
+>ANSWER: The "dec_lat_va" and "dec_long_va" fields were combined to create the "geometry" column in the GageLocations.sf dataframe. The geometry column contains all of the geographic coordinates. 
 >
 
 

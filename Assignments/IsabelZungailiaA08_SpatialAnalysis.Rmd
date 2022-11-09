@@ -86,8 +86,6 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 ```{r Read in USGS Gage Locations}
 #7. Read in gage locations csv as a dataframe
 GageLocations <- read.csv("./Data/Raw/NWIS_SiteInfo_NE_RAW.csv", stringsAsFactors = TRUE)
- 
- #do we need to do anything else here?
 
 #8. Reveal the names of the columns
 colnames(GageLocations)
@@ -232,7 +230,5 @@ Lancaster.gages <- GageLocations.sf.utm[Lancaster.county,]
 
 #24 Plot
 mapview(Lancaster.gages)
-
-
 
 ```

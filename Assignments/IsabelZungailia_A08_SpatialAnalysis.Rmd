@@ -33,7 +33,7 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 #1.Check working directory
 getwd()
 
-#2. Load necessary packages
+#2.Load necessary packages (tidyverse, sf, leaflet, and mapview)
 library(tidyverse)
 library(sf)
 library(leaflet)
@@ -50,28 +50,28 @@ In this exercise, we will be exploring stream gage height data in Nebraska corre
 5. Plot the records as a map (using `mapview` or `ggplot`)
 
 ```{r Read the county data into an sf dataframe}
-#3. Read in Counties shapefile into an sf dataframe, filtering for just NE counties
+#3. Read in Counties shapefile into an sf dataframe, filter for just NE counties
 counties.sf<- st_read('./Data/Spatial/cb_2018_us_county_20m.shp') %>% 
   filter(STATEFP == 31)           #Filter for just NE Counties (FIPS code is 31)
 
 #4. Reveal the CRS of the counties features
 st_crs(counties.sf)
 
-#View column names
-colnames(counties.sf)
-#Check number of rows --> 93 counties 
-nrow(counties_sf) 
-
+    #View column names
+      colnames(counties.sf)
+    #Check number of rows --> 93 counties 
+      nrow(counties.sf) 
+    #Checking EPSG code
+      st_crs(counties.sf)$epsg
+      
 #5. Plot the data
 mapview(counties.sf)
-
-st_crs(counties.sf)$epsg
 
 ```
 
 6. What is the EPSG code of the Counties dataset? Is this a geographic or a projected coordinate reference system? (Or, does this CRS use angular or planar coordinate units?) To what datum is this CRS associated? (Tip: look the EPSG code on <https://spatialreference.org>) 
 
-> ANSWER: An EPSG code is a specific code that is used look up a specific coordinate reference system (crs). The EPSG code of the counties dataset is 4629, which is associated with the North American Datum 1983 datum (NAD83). This is a geographic coordinate system with degrees as units. 
+> ANSWER: An EPSG code is a specific code that is used look up a specific coordinate reference system (CRS). The EPSG code of the counties dataset is 4269, which is associated with the North American Datum 1983 datum (NAD83). This is a geographic coordinate system with degrees as units. 
 > 
 
 
@@ -107,7 +107,7 @@ colnames(GageLocations)
 ```{r Convert dataframe to sf dataframe}
 #10. Convert to an sf object
 GageLocations.sf <- GageLocations %>% 
-  st_as_sf(coords = c('dec_long_va', 'dec_lat_va'), crs=4629)
+  st_as_sf(coords = c('dec_long_va', 'dec_lat_va'), crs=4269)
   
 #11. Re-examine the column names
 colnames(GageLocations.sf) 
@@ -116,7 +116,7 @@ colnames(GageLocations.sf)
 
 12. What new field(s) appear in the sf dataframe created? What field(s), if any, disappeared?
 
->ANSWER: The "dec_lat_va" and "dec_long_va" fields were combined to create the "geometry" column in the 'GageLocations.sf' dataframe. The geometry column contains all of the geographic coordinates. 
+>ANSWER: The "dec_lat_va" and "dec_long_va" fields disappeared - they were combined to create the "geometry" column in the 'GageLocations.sf' dataframe. The geometry column contains all of the geographic coordinates. 
 >
 
 
@@ -128,11 +128,11 @@ colnames(GageLocations.sf)
  * Subtitle your plot with your name
 
 ```{r Plot the spatial features}
-#13. Plot the gage locations atop the county features
+#13. Plot the gage locations atop the county features (using 'ggplot')
 County_Gage_Locations <- ggplot() +
   geom_sf(data = counties.sf,color='red') +
   geom_sf(data = GageLocations.sf,color='blue') +
-  ggtitle('NWIS Gage Locations in Nebraska', subtitle = 'Isabel Zungailia')
+  ggtitle('NWIS Gage Locations in Nebraska', subtitle = 'Isabel Zungailia') #Add title and subtitle
   
 County_Gage_Locations
 
@@ -180,7 +180,7 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #19. Map the points, sized by gage height
-mapview(counties.sf) + mapview(Flow.GageLocation.join, zcol = "gage_ht")
+mapview(counties.sf, color = "red") + mapview(Flow.GageLocation.join, zcol = "gage_ht")
 ```
 
 ---
@@ -196,12 +196,12 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 21. Using `mapview` or `ggplot`, plot the data so that each can be seen as different colors
 
 ```{r}
-#20 Transform the counties and gage location datasets to UTM Zone 14
-counties.sf.utm <- st_transform(counties.sf,32614)
+#20. Transform the counties and gage location datasets to UTM Zone 14
+counties.sf.utm <- st_transform(counties.sf,32614) #Counties
 
-GageLocations.sf.utm <- st_transform(GageLocations.sf,32614)
+GageLocations.sf.utm <- st_transform(GageLocations.sf,32614) #Gage locations
 
-#21 Plot the data
+#21. Plot the data
 ggplot() +
   geom_sf(data = counties.sf.utm,color='blue') + 
   geom_sf(data = GageLocations.sf.utm,color='red') 
@@ -221,14 +221,14 @@ Now let's zoom into a particular county and examine the gages located there.
  * and the gage sites in that county
 
 ```{r}
-#22 Select the county
+#22. Select Lancaster county
 Lancaster.county <- counties.sf.utm %>% 
   filter(NAME %in% c("Lancaster"))
 
-#23 Select gages within the selected county
+#23. Select gages within Lancaster county
 Lancaster.gages <- GageLocations.sf.utm[Lancaster.county,]
 
-#24 Plot
-mapview(Lancaster.gages)
+#24. Plot - Nebraska counties, Lancaster county, Gage Sites in Lancaster county
+mapview(counties.sf.utm) + mapview(Lancaster.county, color = 'blue') + mapview(Lancaster.gages, color ='red')
 
 ```

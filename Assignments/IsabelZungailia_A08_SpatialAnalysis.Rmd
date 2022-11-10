@@ -65,7 +65,7 @@ st_crs(counties.sf)
       st_crs(counties.sf)$epsg
       
 #5. Plot the data
-mapview(counties.sf)
+mapview(counties.sf, layer.name = "Counties")
 
 ```
 
@@ -93,7 +93,7 @@ colnames(GageLocations)
 ```
 
 9. What columns in the dataset contain the x and y coordinate values, respectively?  
-> ANSWER: The x and y coordinate values are in the columns "dec_lat_va" and "dec_long_va".
+> ANSWER: The x and y coordinate values are in the columns "dec_lat_va" (y-coordinates) and "dec_long_va" (x-coordinates).
 > 
 
 
@@ -131,7 +131,7 @@ colnames(GageLocations.sf)
 #13. Plot the gage locations atop the county features (using 'ggplot')
 County_Gage_Locations <- ggplot() +
   geom_sf(data = counties.sf,color='red') +
-  geom_sf(data = GageLocations.sf,color='blue') +
+  geom_sf(data = GageLocations.sf,color='blue', size = 0.75) +
   ggtitle('NWIS Gage Locations in Nebraska', subtitle = 'Isabel Zungailia') #Add title and subtitle
   
 County_Gage_Locations
@@ -180,7 +180,7 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #19. Map the points, sized by gage height
-mapview(counties.sf, color = "red") + mapview(Flow.GageLocation.join, zcol = "gage_ht")
+mapview(counties.sf, col.regions = "light gray", layer.name = "Counties") + mapview(Flow.GageLocation.join, zcol = "gage_ht", layer.name = "Magnitude of Gage Height")
 ```
 
 ---
@@ -198,7 +198,6 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 ```{r}
 #20. Transform the counties and gage location datasets to UTM Zone 14
 counties.sf.utm <- st_transform(counties.sf,32614) #Counties
-
 GageLocations.sf.utm <- st_transform(GageLocations.sf,32614) #Gage locations
 
 #21. Plot the data
@@ -229,6 +228,6 @@ Lancaster.county <- counties.sf.utm %>%
 Lancaster.gages <- GageLocations.sf.utm[Lancaster.county,]
 
 #24. Plot - Nebraska counties, Lancaster county, Gage Sites in Lancaster county
-mapview(counties.sf.utm) + mapview(Lancaster.county, color = 'blue') + mapview(Lancaster.gages, color ='red')
+mapview(counties.sf.utm, col.regions = "yellow", layer.name = "Counties") + mapview(Lancaster.county, col.regions = 'blue', layer.name = "Lancaster County") + mapview(Lancaster.gages, col.regions = "red", layer.name = "Gage Sites")
 
 ```

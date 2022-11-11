@@ -180,7 +180,7 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 
 ```{r}
 #19. Map the points, sized by gage height
-mapview(counties.sf, col.regions = "light gray", layer.name = "Counties") + mapview(Flow.GageLocation.join, zcol = "gage_ht", layer.name = "Magnitude of Gage Height")
+mapview(counties.sf, col.regions = "light gray", layer.name = "Counties") + mapview(Flow.GageLocation.join, zcol = "gage_ht", layer.name = "Magnitude of Gage Height (m)")
 ```
 
 ---

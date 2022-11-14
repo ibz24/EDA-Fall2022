@@ -60,6 +60,8 @@ To begin, we'll fetch the contents of the web site into our coding environment u
 #Fetch the web resources from the URL
 webpage <- read_html('https://www.ncwater.org/WUDC/app/WWATR/report/view/0004-0001/2020')
 webpage
+#html: webpages are written in html, that includes instructions on what to show and how to show it, that is read by your browser software and displayed (according to the instructions)
+#we want to extract certain components of the webpage
 ```
 
 ### Understanding web pages from a coding standpoint
@@ -94,9 +96,11 @@ With this id known, we can extract it's value in a two-step process. First we us
 
 ```{r scrape.some.data}
 the_registrant <- webpage %>% 
-  html_nodes(".table tr:nth-child(1) td:nth-child(2)") %>% 
+  html_nodes(".table tr:nth-child(1) td:nth-child(2)") %>% #specify the html nodes
   html_text()
-the_registrant
+#.table tr:nth-child(1) .left:nth-child(2)
+
+the_registrant #variable extracted from the webpage
 ```
 
 EXERCISE:
@@ -107,6 +111,7 @@ the_facility_name <- webpage %>%
   html_nodes("tr:nth-child(2) th+ .left:nth-child(2)") %>% 
   html_text()
 the_facility_name
+#tr:nth-child(2) th+ .left:nth-child(2)
 
 the_facility_type <- webpage %>% 
   html_nodes("tr:nth-child(2) .left~ .left+ td.left") %>% 
@@ -122,6 +127,8 @@ avg_withdrawals <- webpage %>%
   html_nodes('.table:nth-child(7) td:nth-child(7) , .table:nth-child(7) td:nth-child(3)') %>%
   html_text()
 avg_withdrawals
+#.table:nth-child(7) td:nth-child(7) , .table:nth-child(7) td:nth-child(3)
+#generates a character vector 
 
 max_withdrawals <- webpage %>% 
   html_nodes('.table:nth-child(7) td:nth-child(8) , .table:nth-child(7) td:nth-child(4)') %>%
@@ -135,17 +142,18 @@ max_withdrawals
 Now that we've scraped the data we want into our coding environment, the next step is to wrangle these data into formats we can work with more easily, i.e. a dataframe. Here, we emply the techniques we've learned earlier in this class to do this and then plot the data. 
 ```{r create.dataframe.from.scrapings}
 #Create a dataframe of withdrawals
-df_withdrawals <- data.frame("Month" = rep(1:12),
-                             "Year" = rep(2000,12),
-                             "Avg_Withdrawals_mgd" = as.numeric(avg_withdrawals),
-                             "Max_Withdrawals_mgd" = as.numeric(max_withdrawals))
+df_withdrawals <- data.frame("Month" = rep(1:12), #rep command, creates a sequence of numbers 1-12, corresponds to the months
+                             "Year" = rep(2000,12), #make a vector of 12 repeats of the year 2000
+                             "Avg_Withdrawals_mgd" = as.numeric(avg_withdrawals), #convert to numeric values
+                             "Max_Withdrawals_mgd" = as.numeric(max_withdrawals)) #convert to numeric values
 
 #Modify the dataframe to include the facility name and type as well as the date (as date object)
 df_withdrawals <- df_withdrawals %>% 
   mutate(Registrant = !!the_registrant,
          Facility_name = !!the_facility_name,
          Facility_type = !!the_facility_type,
-         Date = my(paste(Month,"-",Year)))
+         Date = my(paste(Month,"-",Year))) #convert month and year objects to a date
+#!! --> saying "this refers to a variable"
 
 #Plot 
 ggplot(df_withdrawals,aes(x=Date,y=Avg_Withdrawals_mgd)) + 

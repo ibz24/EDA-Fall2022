@@ -175,10 +175,11 @@ Data! But let's keep going. Next, we'll streamline what we've learned above in a
 This begins by setting the parameters of the page we'll be scraping to variables so we can more easily point to, say, a different facility or a different year. Then we update our other code to use these parameters to scrape the data. 
 
 ```{r streamline.the.process}
-#Construct the scraping web address, i.e. its URL
+#Construct the scraping web address, i.e. its URL; 
+#break URL down into its variables (makes it easy to look through data from different years)
 the_base_url <- 'https://www.ncwater.org/WUDC/app/WWATR/report/view'
-the_facility <- '0004-0001'
-the_year <- 2015
+the_facility <- '0004-0001' 
+the_year <- 2020
 the_scrape_url <- paste0(the_base_url, '/', the_facility, '/', the_year)
 print(the_scrape_url)
 
@@ -186,6 +187,7 @@ print(the_scrape_url)
 the_website <- read_html(the_scrape_url)
 
 #Set the element address variables (determined in the previous step)
+#The tags we found via selector gadget...save them as variables
 the_registrant_tag <- '.table tr:nth-child(1) td:nth-child(2)'
 the_facility_name_tag <- 'tr:nth-child(2) th+ .left:nth-child(2)'
 the_facility_id_tag <- 'tr:nth-child(2) .left~ .left+ td.left'
@@ -210,7 +212,7 @@ df_withdrawals <- data.frame("Month" = rep(1:12),
 ggplot(df_withdrawals,aes(x=Date,y=Avg_Withdrawals_mgd)) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2020 Water usage data for",the_registrant),
+  labs(title = paste(the_year, "Water usage data for",the_registrant),
        subtitle = the_facility_name,
        y="Withdrawal (mgd)",
        x="Date")
@@ -254,6 +256,8 @@ scrape.it <- function(the_year, the_facility){
   
   #Pause for a moment - scraping etiquette
   #Sys.sleep(1) #uncomment this if you are doing bulk scraping!
+    #We are going to be iterating, which could be confusing to the server-->webiste provider could cut off access to their site
+    #Contributes to better ethics
   
   #Return the dataframe
   return(df_withdrawals)
@@ -277,12 +281,15 @@ my_facility = '0004-0001'
 #Use lapply to apply the scrape function
 the_dfs <- lapply(X = the_years,
                   FUN = scrape.it,
-                  the_facility=my_facility)
+                  the_facility=my_facility) #Specify the facility (via the variable above)
 
 #OR, use purrr's map function
 the_dfs <- map(the_years,scrape.it,the_facility=my_facility)
+  #uses the purr library's map function; maps values onto a function
+  #give the function and the values you want
+  #same as 'lapply'
 
-#Conflate the returned dataframes into a single dataframe
+#Conflate the returned dataframes into a single dataframe (the_dfs)
 the_df <- bind_rows(the_dfs)
 
 #Plot, because it's fun and rewarding
@@ -309,7 +316,7 @@ the_main_url <- "https://www.ncwater.org/WUDC/app/WWATR/report"
 #Pull its contents into our code environment
 the_main_website <- read_html(the_main_url)
 
-#Use Selector Gadget to find the tag for all the "View Report" objects
+#Use Selector Gadget to find the tag for all the "View Report" objects 
 #You should find this to be "#content a"
 
 #Then extract all the nodes associated with this and rather than extracting them 
@@ -340,6 +347,7 @@ the_years <- rep.int(2020,length(the_facility_ids_subset))
 
 #"Map" the "scrape.it" function to retrieve data for all these
 dfs_2020 <- map2(the_years, the_facility_ids_subset, scrape.it) 
+  #map2 command allows you to iterate through the lists in parallel; go through the first item in each pair, then go through the second item in each pair...
 
 #Conflate the returned list of dataframes into a single one
 df_2020 <- bind_rows(dfs_2020)
@@ -348,7 +356,8 @@ df_2020 <- bind_rows(dfs_2020)
 #Plot
 ggplot(df_2020,aes(y = Avg_Withdrawals_mgd, x=Facility_type)) +
   geom_boxplot()
-
+  #Box plot...
+  #x = Facility name OR as.factor(Month)
 ```
 
 ## 3.3 Scraping across years and sites.
@@ -359,6 +368,7 @@ To scrape for both years and sites, we need to dig deeper into Purrr's map funct
 #Create a subset of facilities
 the_facilities <- sample(the_facility_ids,3)
 the_years = c(2018,2019,2020)
+  #construct 2 elements lists...it will end up being a lost of 9 values
 
 #Use the cross2 function to generate a list of unique combos of year and facility ids
 #Then send apply our scrape.it function to grab values into a list of dataframes

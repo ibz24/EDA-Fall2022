@@ -1,6 +1,6 @@
 ---
 title: "Assignment 09: Data Scraping"
-author: "Student Name"
+author: "Isabel Zungailia"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -27,9 +27,20 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 * Set your ggplot theme
 
 ```{r, message = FALSE}
-#1
+#1.
+#Check working directory
+getwd()
 
+#Load necessary packages
+library(tidyverse)
+library(lubridate)
+library(rvest)
 
+#Set theme
+mytheme <- theme_classic() +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2021 Municipal Local Water Supply Plan (LWSP): 
@@ -40,8 +51,8 @@ This exercise accompanies the lessons in Environmental Data Analytics on data sc
 Indicate this website as the as the URL to be scraped. (In other words, read the contents into an `rvest` webpage object.)
 
 ```{r set.the.scraping.website}
-#2
-
+#2.Use rvest's `read_html()` function to bring the contents of the website into our coding environment
+webpage <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2021')
 
 ```
 
@@ -60,15 +71,24 @@ In the code chunk below scrape these values, assigning them to four separate var
 >HINT: The first value should be "Durham", the second "03-32-010", the third "Municipality", and the last should be a vector of 12 numeric values (represented as strings), with the first value being "27.6400".
 
 ```{r scrape.the.data}
-#3
-water.system.name <- 
-  
-pswid <- 
-  
-ownership <- 
-  
-max.withdrawals.mgd <- 
+#3.
+#Set the element address variables
+water.system.name_tag <- 'div+ table tr:nth-child(1) td:nth-child(2)'
+pswid_tag <- 'td tr:nth-child(1) td:nth-child(5)'
+ownership_tag <- 'div+ table tr:nth-child(2) td:nth-child(4)'
+max.withdrawals.mgd_tag <- 'th~ td+ td'
 
+#Scrape the data items
+water.system.name <- webpage %>% html_nodes(water.system.name_tag) %>% html_text()
+pswid <- webpage %>%   html_nodes(pswid_tag) %>%  html_text()
+ownership <- webpage %>% html_nodes(ownership_tag) %>% html_text()
+max.withdrawals.mgd <- webpage %>% html_nodes(max.withdrawals.mgd_tag) %>% html_text()
+
+#Check values
+water.system.name
+pswid
+ownership
+max.withdrawals.mgd
 ```
 
 
@@ -81,22 +101,27 @@ max.withdrawals.mgd <-
 5. Create a line plot of the maximum daily withdrawals across the months for 2021
 
 ```{r create.a.dataframe.from.scraped.data}
-#4
+#4. Convert scraped data into a dataframe
+df_withdrawals <- data.frame("Month" = rep(1:12)) %>% 
+  mutate(Water_System_Name = !!water.system.name,
+         PSWID = !!pswid,
+         Ownership = !!ownership,
+         Maximum_Withdrawals_MGD = !!max.withdrawals.mgd)
 
-
-
-#5
-
-
-
+#5. Create a line plot of the maximum daily withdrawals across the months for 2021
+ggplot(df_withdrawals,aes(x=Month,y=Maximum_Withdrawals_MGD)) +
+  geom_line() + 
+  geom_smooth(method="loess",se=FALSE) +
+ labs(title = paste("2021 Water Usage Data For",water.system.name),
+       y="Maximum Daily Withdrawals (mgd)",
+       x="Month")
 ```
 
 6. Note that the PWSID and the year appear in the web address for the page we scraped. Construct a function using your code above that can scrape data for any PWSID and year for which the NC DEQ has data. **Be sure to modify the code to reflect the year and site (pwsid) scraped**.
 
 ```{r construct.a.scraping.function}
 #6.
-
-
+webpage <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2021')
 
 ```
 

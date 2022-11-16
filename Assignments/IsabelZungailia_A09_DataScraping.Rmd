@@ -110,7 +110,7 @@ df_withdrawals <- data.frame("Month" = rep(1:12)) %>%
 
 #5. Create a line plot of the maximum daily withdrawals across the months for 2021
 ggplot(df_withdrawals,aes(x=Month,y=Maximum_Withdrawals_MGD)) +
-  geom_line() + 
+  geom_line(aes(group=1)) + 
   geom_smooth(method="loess",se=FALSE) +
  labs(title = paste("2021 Water Usage Data For",water.system.name),
        y="Maximum Daily Withdrawals (mgd)",

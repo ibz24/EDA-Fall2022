@@ -34,6 +34,8 @@ mytheme <- theme_classic() +
   theme(axis.text = element_text(color = "black"), 
         legend.position = "top")
 theme_set(mytheme)
+
+#Control U -->allows us to see the text behind the webpage
 ```
 
 ## Web Services 
@@ -81,11 +83,13 @@ The power in this is that we aren't limited to sending requests and handling res
 ### Pull and plot discharge data
 
 ```{r pull.and.plot.discharge.data}
-#Set the URL
-theURL <- 'https://waterdata.usgs.gov/nwis/uv?search_site_no=02087500&period=7&format=rdb'
+#Set the URL - save web address as a string
+theURL <- 'https://waterdata.usgs.gov/nwis/uv?search_site_no=02087500&period=20&format=rdb'
 
 #Get the data, which starts on line 30
 gage_data <- read.table(theURL,skip = 29,header=TRUE,sep='\t',stringsAsFactors = T) 
+  #read.table is used for reading tab separated data
+  #we want to skip the first 29 rows, saying it has a header separated by a tab ('\t')
 
 #Update the column headers
 colnames(gage_data) = c("agency_cd", "site_no", "datetime", "tz_cd",
@@ -102,10 +106,24 @@ ggplot(gage_data,aes(x=datetime,y=discharge_cfs)) +
 ```
 
 ### Exercise: 
-> Alter the above code so that it plots the last 24 days of flow for gage 02085070
+> Alter the above code so that it plots the last 24 days of flow for gage 02085070 (Eno River)
 
 ```{r pull.and.plot.other.discharge.data}
 
+theURL2 <- 'https://waterdata.usgs.gov/nwis/uv?search_site_no=02085070&period=24&format=rdb'
+
+gage_data2 <- read.table(theURL,skip = 29,header=TRUE,sep='\t',stringsAsFactors = T) 
+
+colnames(gage_data) = c("agency_cd", "site_no", "datetime", "tz_cd",
+                        "discharge_cfs", "89192_00060_cd", "gage_ht_ft", "89193_00065_cd")
+
+gage_data2 <- gage_data2 %>% 
+  select(datetime, discharge_cfs,gage_ht_ft) %>% 
+  mutate(datetime = ymd_hm(datetime))
+
+ggplot(gage_data,aes(x=datetime,y=discharge_cfs)) + 
+  geom_line() +
+  labs(x = "Date",y = "Discharge (cfs)")
 ```
 
 
@@ -121,18 +139,18 @@ And with the formalization of APIs, more R packages are being written to streaml
 ### Grabing discharge data via  the `dataRetrieval` package
 
 ```{r using.the.dataRetrieval.package}
-#Identify gauge to download
+#Identify gauge to download; set variable
 siteNo <- '02087500' 
 
 #Identify parameter of interest: 
 pcode = '00060' #discharge (cfs)
 
 #Identify statistic code for daily values: 
-scode = "00003"  #mean
+scode = "00003"  #mean; aggregating the data
 
 #Identify start and end dates
 start.date = "1930-10-01"
-end.date = "2021-03-21"
+end.date = "2022-11-15"
 
 #Load in data using the package's "readNWISdv" function
 neuse <- readNWISdv(siteNumbers = siteNo, 
@@ -141,13 +159,13 @@ neuse <- readNWISdv(siteNumbers = siteNo,
                     startDate=start.date, 
                     endDate=end.date)
 
-#Rename columns to something more useful
+#Rename columns to something more useful; special function in this data retrieval package
 neuse <- renameNWISColumns(neuse); 
 colnames(neuse)
   
 #Compute annual means
 neuse_by_year <- neuse %>% 
-  group_by(year = year(Date)) %>% 
+  group_by(year = year(Date)) %>% #group by the year
   summarise(mean_annual_flow = mean(Flow))
 
 #Plot
@@ -166,14 +184,19 @@ You'll also need to look up the IDs of the variables you want to extract. Those 
 
 
 ```{r}
-#Apply the API key
-#census_api_key("d4ad7874c996c7a83fec0a81466309ddc07d8e22a", install = TRUE)
+#census=get all the data, survery=get a sample
+#Apply the API key (ethical; key allows them to track where the service requests are coming from)
 
+#installs the key into a file on the container
+census_api_key("d4ad7874c996c7a83fec0a81466309ddc07d8e22", install = TRUE)
+
+#Get american community census data
 nc_pop <- 
-  get_acs(geography = "county",
-          variables = "B01003_001",
+  get_acs(geography = "county", #what level
+          variables = "B01003_001", #reference the code lists to get the 
           state = "NC",
-          geometry = TRUE)
+          geometry = TRUE,
+          key= "d4ad7874c996c7a83fec0a81466309ddc07d8e22")
 
 ggplot(nc_pop, aes(fill = estimate)) +
   geom_sf() +
@@ -206,16 +229,36 @@ The RVest scraping workflow is as follows:
 
 ```{r scrape.data.manually eval=FALSE}
 #1 Link to the web site using read_html
-the_website
+the_website <- read_html('https://www.eia.gov/electricity/state/')
 
-#2&3 Locate elements and read their text attributes into variables
-the_states <- 
-the_price <- 
-the_capacity <- 
-net_generation <- 
-total_retail <- 
+#2&3 Locate elements and read their text attributes into variables-->"look for the text tag on the website"
+the_states <- the_website %>% 
+  html_nodes("th:nth-child(1)") %>% 
+  html_text()
+
+the_price <- the_website %>% 
+  html_nodes("th:nth-child(2)") %>% 
+  html_text()
+
+the_capacity <- the_website %>% 
+  html_nodes("th:nth-child(3)") %>% 
+  html_text()
   
-#3 Construct a dataframe from the values
+net_generation <- the_website %>% 
+  html_nodes("th:nth-child(4)") %>% 
+  html_text()
+
+total_retail <- the_website %>% 
+  html_nodes("th:nth-child(5)") %>% 
+  html_text()
+  
+#3. Construct a dataframe from the values
+ energydata <- data.frame(States = the_states, 
+                        Price = the_price,
+                        Capacity = the_capacity, 
+                        Net_Generation = net_generation,
+                        Total_Retail = total_retail)
+
 ```
 
 
@@ -227,23 +270,45 @@ scrape.it <- function(the_year){
                     paste0('https://www.eia.gov/electricity/state/archive/',the_year,'/'))
 
   #Fetch the website
-  #<enter code from above here> 
+  the_website = read_html(the_url)
   
   #Scrape the data
-  #<enter code from above here>
+the_states <- the_website %>% 
+  html_nodes("th:nth-child(1)") %>% 
+  html_text()
+
+the_price <- the_website %>% 
+  html_nodes("th:nth-child(2)") %>% 
+  html_text()
+
+the_capacity <- the_website %>% 
+  html_nodes("th:nth-child(3)") %>% 
+  html_text()
+  
+net_generation <- the_website %>% 
+  html_nodes("th:nth-child(4)") %>% 
+  html_text()
+
+total_retail <- the_website %>% 
+  html_nodes("th:nth-child(5)") %>% 
+  html_text()
   
   #Convert to dataframe
-  #<enter code from above here>
+ energydata <- data.frame(States = the_states, 
+                        Price = the_price,
+                        Capacity = the_capacity, 
+                        Net_Generation = net_generation,
+                        Total_Retail = total_retail) %>% mutate(year = the_year)
   
   #Return the dataframe
-  return(the_df)
+  return(energydata)
 }
 
-
 # Use the above function to scrape data for 2017
-
+df2017 <- scrape.it(2017)
 
 # Map the function to scrape data from 2017 to 2019
+df_manyyears <- map(seq(2017,2019), scrape.it) %>% bind_rows()
 
 
 ```

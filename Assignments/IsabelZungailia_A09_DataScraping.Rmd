@@ -103,7 +103,6 @@ max.withdrawals.mgd
 ```{r create.a.dataframe.from.scraped.data}
 #4. Convert scraped data into a dataframe
 df_withdrawals <- data.frame(Month = as.factor(c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"))) %>% 
-  arrange(ymd(df_withdrawals$Date)) %>% 
   mutate(Water_System_Name = !!water.system.name,
          PSWID = !!pswid,
          Ownership = !!ownership,
@@ -111,8 +110,21 @@ df_withdrawals <- data.frame(Month = as.factor(c("Jan", "May", "Sept", "Feb", "J
          Year = "2021",
          Date = my(paste(Month,"-",Year)))
 
+df_withdrawals2 <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12), Year = rep(2021,12), Max_withdrawals_mgd = as.numeric(max.withdrawals.mgd))
+
+df_withdrawals2 <- df_withdrawals2 %>% 
+  mutate(Water_System_Name = !!water.system.name,
+         PSWID = !!pswid,
+         Ownership = !!ownership,
+         Date = my(paste(Month,"-",Year))) %>% 
+  arrange(Month)
+
+  
+
+
+
 #5. Create a line plot of the maximum daily withdrawals across the months for 2021
-ggplot(df_withdrawals,aes(x=Month,y=Maximum_Withdrawals_MGD)) +
+ggplot(df_withdrawals2,aes(x=Month_abbr,y=Max_withdrawals_mgd)) +
   geom_line(aes(group=1)) + 
   geom_smooth(method="loess",se=FALSE) +
  labs(title = paste("2021 Water Usage Data For",water.system.name),

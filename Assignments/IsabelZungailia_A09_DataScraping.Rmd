@@ -190,8 +190,6 @@ Durham_Asheville_plot <-
 
 Durham_Asheville_plot
 
-  
-
 ```
 
 
@@ -201,6 +199,17 @@ Durham_Asheville_plot
 
 ```{r fetch.and.plot.Asheville.multiyear.data}
 #9
+the_years = rep(2010:2019)
+pswid = '01-11-010'
+
+Asheville_2010_thru_2019 <- lapply(X = the_years,
+                  FUN = scrape.it,
+                  pswid='01-11-010') 
+
+Asheville_2010_thru_2019 <- map(the_years,scrape.it, pswid='01-11-010')
+
+Asheville_2010_thru_2019_final <- bind_rows(Asheville_2010_thru_2019)
+
 
 
 ```

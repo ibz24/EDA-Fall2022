@@ -102,11 +102,14 @@ max.withdrawals.mgd
 
 ```{r create.a.dataframe.from.scraped.data}
 #4. Convert scraped data into a dataframe
-df_withdrawals <- data.frame("Month" = rep(1:12)) %>% 
+df_withdrawals <- data.frame(Month = as.factor(c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"))) %>% 
+  arrange(ymd(df_withdrawals$Date)) %>% 
   mutate(Water_System_Name = !!water.system.name,
          PSWID = !!pswid,
          Ownership = !!ownership,
-         Maximum_Withdrawals_MGD = !!max.withdrawals.mgd)
+         Maximum_Withdrawals_MGD = !!max.withdrawals.mgd,
+         Year = "2021",
+         Date = my(paste(Month,"-",Year)))
 
 #5. Create a line plot of the maximum daily withdrawals across the months for 2021
 ggplot(df_withdrawals,aes(x=Month,y=Maximum_Withdrawals_MGD)) +
@@ -123,12 +126,18 @@ ggplot(df_withdrawals,aes(x=Month,y=Maximum_Withdrawals_MGD)) +
 #6.
 webpage <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2021')
 
+the_url <- ifelse(the_year==2021,
+                    'https://www.ncwater.org/WUDC/app/LWSP/report.php?',
+                    paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?',pwsid,'&',Year))
+
 ```
 
 7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2015
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7
+webpage2 <- read_html('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=03-32-010&year=2015')
+
 
 
 ```

@@ -163,10 +163,10 @@ max.withdrawals.mgd <- the_website %>% html_nodes(max.withdrawals.mgd_tag) %>% h
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7.
-the_df <- scrape.it(2015,'03-32-010')
-view(the_df)
+durham_2015<- scrape.it(2015,'03-32-010')
+view(durham_2015)
 
-ggplot(the_df,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) +
+ggplot(durham_2015,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) +
   geom_line(aes(group=1)) + 
   geom_smooth(method="loess",se=FALSE) +
  labs(title = paste("2015 Water Usage Data For",water.system.name),
@@ -177,8 +177,20 @@ ggplot(the_df,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) +
 8. Use the function above to extract data for Asheville (PWSID = 01-11-010) in 2015. Combine this data with the Durham data collected above and create a plot that compares Asheville's to Durham's water withdrawals.
 
 ```{r fetch.and.plot.Asheville.2015.data}
-#8
+#8.
+asheville_2015 <- scrape.it(2015,'01-11-010')
+view(asheville_2015)
 
+Durham_Asheville <- rbind(durham_2015, asheville_2015)
+
+Durham_Asheville_plot <- 
+  ggplot(Durham_Asheville, aes(x=Date, y=as.numeric(Max_Withdrawals_mgd), color = Water_System_Name)) + 
+  geom_line() +
+  ggtitle("Durham and Asheville")
+
+Durham_Asheville_plot
+
+  
 
 ```
 

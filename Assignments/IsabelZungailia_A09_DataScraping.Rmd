@@ -35,6 +35,7 @@ getwd()
 library(tidyverse)
 library(lubridate)
 library(rvest)
+library(dplyr)
 
 #Set theme
 mytheme <- theme_classic() +
@@ -107,8 +108,9 @@ df_withdrawals <- data.frame(Month = as.factor(c("Jan", "May", "Sept", "Feb", "J
          PSWID = !!pswid,
          Ownership = !!ownership,
          Maximum_Withdrawals_MGD = !!max.withdrawals.mgd,
-         Year = "2021",
-         Date = my(paste(Month,"-",Year)))
+         Month = factor(Month, levels = month.name),
+         Date = my(paste(Month,"-",Year))) %>% 
+  arrange(Month)
 
 df_withdrawals2 <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12), Year = rep(2021,12), Max_withdrawals_mgd = as.numeric(max.withdrawals.mgd))
 
@@ -119,17 +121,14 @@ df_withdrawals2 <- df_withdrawals2 %>%
          Date = my(paste(Month,"-",Year))) %>% 
   arrange(Month)
 
-  
-
-
-
 #5. Create a line plot of the maximum daily withdrawals across the months for 2021
 ggplot(df_withdrawals2,aes(x=Month_abbr,y=Max_withdrawals_mgd)) +
   geom_line(aes(group=1)) + 
   geom_smooth(method="loess",se=FALSE) +
  labs(title = paste("2021 Water Usage Data For",water.system.name),
        y="Maximum Daily Withdrawals (mgd)",
-       x="Month")
+       x="Month") %>% 
+
 ```
 
 6. Note that the PWSID and the year appear in the web address for the page we scraped. Construct a function using your code above that can scrape data for any PWSID and year for which the NC DEQ has data. **Be sure to modify the code to reflect the year and site (pwsid) scraped**.

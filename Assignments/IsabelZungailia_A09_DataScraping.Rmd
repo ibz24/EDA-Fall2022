@@ -125,7 +125,6 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_withdrawals_mgd)) +
 
 ```{r construct.a.scraping.function}
 #6.
-
 scrape.it <- function(the_year, the_pwsid){
 
 the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=',the_pwsid,'&year=', the_year))
@@ -186,7 +185,9 @@ Durham_Asheville <- rbind(durham_2015, asheville_2015)
 Durham_Asheville_plot <- 
   ggplot(Durham_Asheville, aes(x=Date, y=as.numeric(Max_Withdrawals_mgd), color = Water_System_Name)) + 
   geom_line() +
-  ggtitle("Durham and Asheville")
+  labs(title ="Durham and Asheville Water Withdrawals (mgd)",
+    y="Max Daily Withdrawal (mgd)",
+       x="Date")
 
 Durham_Asheville_plot
 
@@ -199,19 +200,19 @@ Durham_Asheville_plot
 
 ```{r fetch.and.plot.Asheville.multiyear.data}
 #9.
-years <- 2010:2019
+years <- seq(2010,2019)
 
-Asheville_2010_thru_2019 <- map2(01-11-010, years, scrape.it)
+Asheville_2010_thru_2019 <- map2(years,"01-11-010", scrape.it)
 
 Asheville_2010_thru_2019_final <- bind_rows(Asheville_2010_thru_2019)
 
-ggplot(Asheville_2010_thru_2019_final,aes(x=Date,y=Max_Withdrawals_mgd)) + 
+ggplot(Asheville_2010_thru_2019_final,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2020 Water usage data for Asheville"),
-       subtitle = the_facility_name,
-       y="Max Daily Withdrawal (mgd)",
+  labs(title ="Water Withdrawals for Asheville (mgd) ",
+    y="Max Daily Withdrawal (mgd)",
        x="Date")
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
+  Just by looking at the plot, it is clear that Asheville's water usage has fluctuated over time, but the overall trend appears to be somewhat level between the years 2010 up until 2017. There is a noticable increase in the MGD values between 2017 and 2020. 

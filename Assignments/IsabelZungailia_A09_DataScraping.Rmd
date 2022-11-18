@@ -198,24 +198,19 @@ Durham_Asheville_plot
 >TIP: See Section 3.2 in the "09_Data_Scraping.Rmd" where we apply "map2()" to iteratively run a function over two inputs. Pipe the output of the map2() function to `bindrows()` to combine the dataframes into a single one. 
 
 ```{r fetch.and.plot.Asheville.multiyear.data}
-#9
-the_years = rep(2010:2019)
-pwsid = '01-11-010'
+#9.
+years <- 2010:2019
 
-Asheville_2010_thru_2019 <- lapply(X = the_years,
-                  FUN = scrape.it,
-                  the_pwsid=pwsid) 
-
-Asheville_2010_thru_2019 <- map(the_years,scrape.it, the_pwsid='01-11-010')
+Asheville_2010_thru_2019 <- map2(01-11-010, years, scrape.it)
 
 Asheville_2010_thru_2019_final <- bind_rows(Asheville_2010_thru_2019)
 
 ggplot(Asheville_2010_thru_2019_final,aes(x=Date,y=Max_Withdrawals_mgd)) + 
   geom_line() + 
   geom_smooth(method="loess",se=FALSE) +
-  labs(title = paste("2020 Water usage data for",the_registrant),
+  labs(title = paste("2020 Water usage data for Asheville"),
        subtitle = the_facility_name,
-       y="Withdrawal (mgd)",
+       y="Max Daily Withdrawal (mgd)",
        x="Date")
 ```
 

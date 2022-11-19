@@ -106,11 +106,11 @@ max.withdrawals.mgd
 df_withdrawals <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12), Year = rep(2021,12), Max_withdrawals_mgd = as.numeric(max.withdrawals.mgd))
 
 df_withdrawals <- df_withdrawals %>% 
-  mutate(Water_System_Name = !!water.system.name,
+  mutate(Water_System_Name = !!water.system.name, #Add necessary columns
          PSWID = !!pswid,
          Ownership = !!ownership,
-         Date = my(paste(Month,"-",Year))) %>% 
-  arrange(Month)
+         Date = my(paste(Month,"-",Year))) %>% #Create a date column
+  arrange(Month) #Arrange by Month
 
 #5. Create a line plot of the maximum daily withdrawals across the months for 2021
 ggplot(df_withdrawals,aes(x=Date,y=Max_withdrawals_mgd)) +
@@ -125,6 +125,7 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_withdrawals_mgd)) +
 
 ```{r construct.a.scraping.function}
 #6.
+#Constructing a function to scrape for any PWSID and yearfor which the NC DEQ has data
 scrape.it <- function(the_year, the_pwsid){
 
 the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=',the_pwsid,'&year=', the_year))
@@ -162,9 +163,11 @@ max.withdrawals.mgd <- the_website %>% html_nodes(max.withdrawals.mgd_tag) %>% h
 
 ```{r fetch.and.plot.Durham.2015.data}
 #7.
+#Use function to extract max daily withdrawals for Durham for each month in 2015
 durham_2015<- scrape.it(2015,'03-32-010')
 view(durham_2015)
 
+#Plot the results
 ggplot(durham_2015,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) +
   geom_line(aes(group=1)) + 
   geom_smooth(method="loess",se=FALSE) +
@@ -177,11 +180,14 @@ ggplot(durham_2015,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) +
 
 ```{r fetch.and.plot.Asheville.2015.data}
 #8.
+#Use function to extract max daily withdrawals for Asheville for each month in 2015
 asheville_2015 <- scrape.it(2015,'01-11-010')
 view(asheville_2015)
 
+#Combine Durham and Asheville
 Durham_Asheville <- rbind(durham_2015, asheville_2015)
 
+#Plot the results
 Durham_Asheville_plot <- 
   ggplot(Durham_Asheville, aes(x=Date, y=as.numeric(Max_Withdrawals_mgd), color = Water_System_Name)) + 
   geom_line() +
@@ -200,10 +206,13 @@ Durham_Asheville_plot
 
 ```{r fetch.and.plot.Asheville.multiyear.data}
 #9.
+#Set desired dates
 years <- seq(2010,2019)
 
+#Use map2 function
 Asheville_2010_thru_2019 <- map2(years,"01-11-010", scrape.it)
 
+#Combine data frames into a single one (using bind_rows)
 Asheville_2010_thru_2019_final <- bind_rows(Asheville_2010_thru_2019)
 
 ggplot(Asheville_2010_thru_2019_final,aes(x=Date,y=as.numeric(Max_Withdrawals_mgd))) + 

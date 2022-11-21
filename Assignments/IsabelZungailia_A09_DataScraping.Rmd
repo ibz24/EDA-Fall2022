@@ -125,7 +125,7 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_withdrawals_mgd)) +
 
 ```{r construct.a.scraping.function}
 #6.
-#Constructing a function to scrape for any PWSID and yearfor which the NC DEQ has data
+#Constructing a function to scrape for any PWSID and year for which the NC DEQ has data
 scrape.it <- function(the_year, the_pwsid){
 
 the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=',the_pwsid,'&year=', the_year))
@@ -224,4 +224,4 @@ ggplot(Asheville_2010_thru_2019_final,aes(x=Date,y=as.numeric(Max_Withdrawals_mg
 ```
 
 >Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
-  Just by looking at the plot, it is clear that Asheville's water usage has fluctuated over time, but the overall trend appears to be somewhat level between the years 2010 up until 2017. There is a noticable increase in the MGD values between 2017 and 2020. 
+  Just by looking at the plot, it is clear that Asheville's water usage has fluctuated over time, but the overall trend appears to be somewhat level between the years 2010 up until 2017. There appears to be an increasing trend in the MGD values between 2017 and 2020. 

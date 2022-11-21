@@ -103,7 +103,11 @@ max.withdrawals.mgd
 
 ```{r create.a.dataframe.from.scraped.data}
 #4. Convert scraped data into a dataframe
-df_withdrawals <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12), Year = rep(2021,12), Max_withdrawals_mgd = as.numeric(max.withdrawals.mgd))
+df_withdrawals <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", 
+                                            "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), 
+                             Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12), 
+                             Year = rep(2021,12), 
+                             Max_withdrawals_mgd = as.numeric(max.withdrawals.mgd))
 
 df_withdrawals <- df_withdrawals %>% 
   mutate(Water_System_Name = !!water.system.name, #Add necessary columns
@@ -128,7 +132,8 @@ ggplot(df_withdrawals,aes(x=Date,y=Max_withdrawals_mgd)) +
 #Constructing a function to scrape for any PWSID and year for which the NC DEQ has data
 scrape.it <- function(the_year, the_pwsid){
 
-the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=',the_pwsid,'&year=', the_year))
+the_website <- read_html(paste0('https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=',the_pwsid,
+                                '&year=',the_year))
 
 #Set the element address variables
 water.system.name_tag <- 'div+ table tr:nth-child(1) td:nth-child(2)'
@@ -143,7 +148,9 @@ ownership <- the_website %>% html_nodes(ownership_tag) %>% html_text()
 max.withdrawals.mgd <- the_website %>% html_nodes(max.withdrawals.mgd_tag) %>% html_text()
 
 #Convert to a dataframe
-  df_withdrawals2 <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12))
+  df_withdrawals2 <- data.frame(Month_abbr = c("Jan", "May", "Sept", "Feb", "June", "Oct", 
+                                               "Mar", "Jul", "Nov", "Apr", "Aug", "Dec"), 
+                                Month = c(1, 5, 9, 2, 6, 10, 3, 7, 11, 4, 8, 12))
   
   df_withdrawals2 <- df_withdrawals2 %>% 
   mutate(Water_System_Name = !!water.system.name,
@@ -189,7 +196,7 @@ Durham_Asheville <- rbind(durham_2015, asheville_2015)
 
 #Plot the results
 Durham_Asheville_plot <- 
-  ggplot(Durham_Asheville, aes(x=Date, y=as.numeric(Max_Withdrawals_mgd), color = Water_System_Name)) + 
+  ggplot(Durham_Asheville, aes(x=Date, y=as.numeric(Max_Withdrawals_mgd),color = Water_System_Name)) + 
   geom_line() +
   labs(title ="Durham and Asheville Water Withdrawals (mgd)",
     y="Max Daily Withdrawal (mgd)",
